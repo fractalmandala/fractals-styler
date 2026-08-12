@@ -176,3 +176,5 @@ Confirm `sass` is installed (`pnpm add -D sass`) and that your `@import`/`@use` 
 
 The software is available under the [MIT License](LICENSE). Bundled fonts are
 licensed separately under the terms documented in [fonts/LICENSES.md](fonts/LICENSES.md).
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.

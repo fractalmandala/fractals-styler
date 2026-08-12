@@ -1,0 +1,121 @@
+.appshell
+	position: relative
+	isolation: isolate
+	display: flex
+	flex-direction: column
+	min-height: 100vh
+
+.appheader
+	position: sticky
+	top: 0
+	z-index: var(--z-sticky)
+	display: flex
+	align-items: center
+	height: var(--header-height)
+	padding-inline: var(--shell-pad, 20px)
+
+.appbody
+	position: relative
+	display: grid
+	grid-template-columns: 1fr
+	min-height: calc(100vh - var(--header-height))
+
+.appfooter
+	display: flex
+	align-items: center
+	min-height: var(--footer-height)
+	padding-inline: var(--shell-pad, 20px)
+
+// Middle reading column. In the canonical markup <article class="bodymain">
+// IS the middle cell; its content is constrained to a comfortable measure
+// that grows from --body-min to --body-max and stays centred.
+.bodymain
+	min-width: 0
+	display: flex
+	flex-direction: column
+	padding-block: var(--space-8)
+	padding-inline: var(--shell-pad, 20px)
+	> *
+		width: 100%
+		max-width: clamp(var(--body-min, 600px), 58vw, var(--body-max, 800px))
+		margin-inline: auto
+
+// Sidebars. Mobile-first: both hidden.
+.sidebarleft, .sidebarright
+	min-width: 0
+	display: none
+
+@media (min-width: 1025px)
+	// Two-column when the left rail exists; otherwise the body stays fluid.
+	.appbody[data-left='true']
+		grid-template-columns: clamp(var(--sidebar-min, 200px), 20vw, var(--sidebar-max, 360px)) minmax(0, 1fr)
+
+	.sidebarleft
+		display: flex
+		flex-direction: column
+		position: sticky
+		top: var(--header-height)
+		height: calc(100vh - var(--header-height))
+		overflow-y: auto
+		padding: var(--space-8) var(--space-4)
+
+	.sidebarright
+		display: none
+
+@media (min-width: 1201px)
+	// Three-column when both rails exist.
+	.appbody[data-left='true'][data-right='true']
+		grid-template-columns: clamp(var(--sidebar-min, 200px), 20vw, var(--sidebar-max, 360px)) minmax(0, 1fr) clamp(var(--sidebar-min, 200px), 20vw, var(--sidebar-max, 360px))
+
+	// Body + right rail when the left rail is absent.
+	.appbody[data-left='false'][data-right='true']
+		grid-template-columns: minmax(0, 1fr) clamp(var(--sidebar-min, 200px), 20vw, var(--sidebar-max, 360px))
+
+	.sidebarright
+		display: flex
+		flex-direction: column
+		position: sticky
+		top: var(--header-height)
+		height: calc(100vh - var(--header-height))
+		overflow-y: auto
+		padding: var(--space-8) var(--space-4)
+// 2. Layout primitives -------------------------------------------------
+// Classic composition utilities — reusable everywhere, framework-free.
+
+// Vertical rhythm: owl selector, gap via --stack-gap
+.stack
+	display: flex
+	flex-direction: column
+	justify-content: flex-start
+	gap: var(--stack-gap, var(--space-4))
+
+// Wrapping row of items with a shared gap
+.cluster
+	display: flex
+	flex-wrap: wrap
+	gap: var(--cluster-gap, var(--space-3))
+	align-items: center
+
+// Intrinsic sidebar: a fixed-ish rail beside a fluid main, wraps when tight
+.with-sidebar
+	display: flex
+	flex-wrap: wrap
+	gap: var(--sidebar-gap, var(--space-6))
+	> .rail
+		flex-basis: var(--rail-width, 240px)
+		flex-grow: 1
+	> .flow
+		flex-basis: 0
+		flex-grow: 999
+		min-width: var(--flow-min, 60%)
+
+// Horizontal overflow scroller
+.reel
+	display: flex
+	gap: var(--reel-gap, var(--space-4))
+	overflow-x: auto
+	overscroll-behavior-inline: contain
+	scroll-snap-type: inline mandatory
+	> *
+		scroll-snap-align: start
+		flex: 0 0 auto

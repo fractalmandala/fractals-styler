@@ -1,0 +1,42 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    verify:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v6
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v6
+
+            - name: Install Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Check formatting and types
+              run: |
+                  pnpm format:check
+                  pnpm check
+
+            - name: Build package
+              run: pnpm build
+
+            - name: Compile Sass scaffold
+              run: pnpm exec sass templates/index.sass /tmp/fractals-styler.css --no-source-map
+
+            - name: Build preview
+              run: pnpm exec vite build --config preview/vite.config.ts --outDir /tmp/fractals-styler-preview --emptyOutDir

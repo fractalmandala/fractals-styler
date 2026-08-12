@@ -1,0 +1,138 @@
+:root
+	// Fonts
+	--font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+	--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace
+
+	// Fluid type scale. Public utilities consume these values directly.
+	--text-xs: 10px
+	--text-sm: 12px
+	--text-md: 14px
+	--text-bs: clamp(0.884rem, 0.9065rem + -0.0291vw, 0.9rem)
+	--text-lg: clamp(1.125rem, 1.0739rem + 0.2273vw, 1.25rem)
+	--text-xl: clamp(1.4063rem, 1.3159rem + 0.4014vw, 1.7675rem)
+	--text-2xl: clamp(1.7578rem, 1.5725rem + 0.8238vw, 2.4992rem)
+	--text-3xl: clamp(2.1973rem, 1.8631rem + 1.4852vw, 3.5339rem)
+	--text-4xl: clamp(2.7466rem, 2.184rem + 2.5004vw, 4.997rem)
+	--text-5xl: clamp(3.4332rem, 2.5251rem + 4.0361vw, 7.0657rem)
+
+	// Finite fluid rhythm. JIT numeric values remain an advanced escape hatch.
+	--space-1: 4px
+	--space-2: clamp(0.5rem, 0.4489rem + 0.2273vw, 0.625rem)
+	--space-3: clamp(0.75rem, 0.6733rem + 0.3409vw, 0.9375rem)
+	--space-4: clamp(1rem, 0.8977rem + 0.4545vw, 1.25rem)
+	--space-6: clamp(1.5rem, 1.3466rem + 0.6818vw, 1.875rem)
+	--space-8: clamp(2rem, 1.7955rem + 0.9091vw, 2.5rem)
+	--space-12: clamp(3rem, 2.6932rem + 1.3636vw, 3.75rem)
+	--space-16: clamp(4rem, 3.5909rem + 1.8182vw, 5rem)
+	--space-20: clamp(5rem, 4.4886rem + 2.2727vw, 6.25rem)
+	--space-24: clamp(6rem, 5.3864rem + 2.7273vw, 7.5rem)
+
+	// Radius scale
+	--radius-0: 0
+	--radius-2: 2px
+	--radius-4: 4px
+	--radius-6: 6px
+	--radius-8: 8px
+	--radius-12: 12px
+	--radius-16: 16px
+	--radius-24: 24px
+	--radius-full: 9999px
+
+	// Shadow scale
+	--shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06)
+	--shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08)
+	--shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12)
+	--shadow-focus: 0 0 0 3px var(--ring)
+
+	// Layering scale
+	--z-base: 0
+	--z-raised: 10
+	--z-sticky: 100
+	--z-modal: 200
+	--z-toast: 300
+
+	// Layout
+	--header-height: 64px
+	--footer-height: 56px
+	--shell-pad: 20px
+	--layout-max: 1440px
+	--sidebar-min: 200px
+	--sidebar-max: 360px
+	--body-min: 600px
+	--body-max: 800px
+
+	// Feedback palette
+	--red-500: #ef4444
+	--amber-500: #f59e0b
+	--emerald-500: #10b981
+	--sky-500: #0ea5e9
+	--feedback-danger: var(--red-500)
+	--feedback-warning: var(--amber-500)
+	--feedback-success: var(--emerald-500)
+	--feedback-info: var(--sky-500)
+
+	// Light theme
+	--bg: #fdfefe
+	--bg-surface: #fcf9f9
+	--bg-raised: #f1f5f9
+	--text-primary: #0f172a
+	--text-secondary: #696969
+	--text-muted: #929497
+	--border: #e2e8f0
+	--border-subtle: #f1f5f9
+	--border-strong: #cbd5e1
+	--theme: #007f4e
+	--theme-hover: #00663f
+	--theme-active: #005031
+	--ring: rgba(59, 130, 246, 0.35)
+	--text-inverse: #ffffff
+
+// System preference auto dark mode when the user has not selected light.
+@media (prefers-color-scheme: dark)
+	:root:not([data-theme='light'])
+		--bg: #131313
+		--bg-surface: #222222
+		--bg-raised: #363636
+		--text-primary: #f9fafb
+		--text-secondary: #666767
+		--text-muted: #64748b
+		--border: #2f3030
+		--border-subtle: #2d2d2d
+		--border-strong: #575757
+		--theme: #007f4e
+		--theme-hover: #039f49
+		--theme-active: #5e9c2f
+		--ring: rgba(59, 130, 246, 0.35)
+		--text-inverse: #0b0f17
+
+[data-theme='dark']
+	--bg: #131313
+	--bg-surface: #222222
+	--bg-raised: #363636
+	--text-primary: #f9fafb
+	--text-secondary: #666767
+	--text-muted: #64748b
+	--border: #2f3030
+	--border-subtle: #2d2d2d
+	--border-strong: #575757
+	--theme: #007f4e
+	--theme-hover: #039f49
+	--theme-active: #5e9c2f
+	--ring: rgba(59, 130, 246, 0.35)
+	--text-inverse: #0b0f17
+
+[data-theme='light']
+	--bg: #fdfefe
+	--bg-surface: #fcf9f9
+	--bg-raised: #f1f5f9
+	--text-primary: #0f172a
+	--text-secondary: #696969
+	--text-muted: #929497
+	--border: #e2e8f0
+	--border-subtle: #f1f5f9
+	--border-strong: #cbd5e1
+	--theme: #007f4e
+	--theme-hover: #00663f
+	--theme-active: #005031
+	--ring: rgba(59, 130, 246, 0.35)
+	--text-inverse: #ffffff

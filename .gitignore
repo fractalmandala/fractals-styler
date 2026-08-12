@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.svelte-kit/
+.vite/
+coverage/
+
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+
+*.tgz
+
+# Local extraction/sanitization receipts; retained locally, not published.
+FORK_REPORT.md
+SANITIZATION_REPORT.md

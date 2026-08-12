@@ -1,0 +1,76 @@
+{
+	"name": "fractals-styler",
+	"version": "2.2.0",
+	"packageManager": "pnpm@11.20.0",
+	"description": "A BEM-free, CUBE-inspired SASS design-system scaffold with token utilities, reusable compositions, an optional JIT escape hatch, and a live token preview.",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/fractalmandala/fractals-styler.git"
+	},
+	"homepage": "https://github.com/fractalmandala/fractals-styler#readme",
+	"bugs": {
+		"url": "https://github.com/fractalmandala/fractals-styler/issues"
+	},
+	"type": "module",
+	"bin": {
+		"fractals-styler": "./dist/cli.js"
+	},
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"svelte": "./src/lib/index.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./lib": {
+			"types": "./src/lib/index.ts",
+			"svelte": "./src/lib/index.ts",
+			"import": "./src/lib/index.ts"
+		},
+		"./fonts/*": "./fonts/*"
+	},
+	"files": [
+		"dist",
+		"templates",
+		"fractal-styler-guide",
+		"fonts",
+		"src/lib",
+		"SNIPPET_AGENTS.md"
+	],
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"preview": "vite --config preview/vite.config.ts",
+		"preview:builder": "vite --host 127.0.0.1 --open /dev/prototype.html",
+		"check": "tsc --noEmit && svelte-check --tsconfig ./tsconfig.json",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"prepare": "tsup"
+	},
+	"peerDependencies": {
+		"vite": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0"
+	},
+	"dependencies": {
+		"fast-glob": "^3.3.3"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "^7.2.0",
+		"@types/node": "^24.13.3",
+		"prettier": "^3.6.2",
+		"prettier-plugin-svelte": "^3.4.1",
+		"sass": "^1.102.0",
+		"svelte": "^5.56.8",
+		"svelte-check": "^4.3.6",
+		"tsup": "^8.5.1",
+		"typescript": "^5.9.3",
+		"vite": "^8.1.5"
+	},
+	"keywords": [
+		"sveltekit",
+		"sass",
+		"jit",
+		"css-utilities"
+	]
+}

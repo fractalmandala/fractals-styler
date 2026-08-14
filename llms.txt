@@ -1,0 +1,48 @@
+# fractals-styler
+
+> A BEM-free, CUBE-inspired SASS design-system scaffold for Vite projects (SvelteKit is the primary target). Ships an editable finite token/utility/composition vocabulary via `fractals-styler init`, an optional Vite plugin that JIT-generates arbitrary numeric utilities (`gap18`, `pad22-sm`) as an advanced escape hatch, and a published Svelte token showcase (`fractals-styler/lib`). Indented `.sass` throughout; state via `data-*`/`aria-*`, never modifier classes.
+
+## Orientation
+
+- [AGENTS.md](AGENTS.md): Agent instructions for working on this package — architecture map, contract boundaries, sync checklist, verification commands, and known packaging inconsistencies.
+- [README.md](README.md): Install/usage guide for consumers (init, static system, JIT plugin, troubleshooting).
+- [SNIPPET_AGENTS.md](SNIPPET_AGENTS.md): Packaged progressive-discovery index that consumer projects copy into their own AGENTS.md.
+- [dev/CHECKLIST.md](dev/CHECKLIST.md): Mandatory synchronization steps whenever Sass templates or utility classes change (barrel, registry, preview, builder), plus the npm publish procedure.
+- [CHANGELOG.md](CHANGELOG.md): Release history.
+- [CONTRIBUTING.md](CONTRIBUTING.md): Development setup, styling contract, commit conventions.
+- [package.json](package.json): Scripts, `bin`, `exports` map, npm `files` whitelist, publish boundary.
+
+## Documentation (the 9-file guide)
+
+- [01-setup.md](docs/01-setup.md): Installation, `init` usage and destinations, `--force`, index.sass cascade, layout import, JIT plugin setup (`content` globs, `virtual:fractals-styler.css`), troubleshooting.
+- [02-principles.md](docs/02-principles.md): Core principles, CUBE CSS methodology (Composition/Utility/Block/Exception) vs BEM, class grammar (`layer role variant breakpoint`), markup ordering.
+- [03-tokens.md](docs/03-tokens.md): All global custom properties: fluid `--text-*` and `--space-*`, radius/shadow/z-index scales, the flat color palette (3 backgrounds, 3 text, 3 borders, 3 theme colors), theme switching.
+- [04-utilities.md](docs/04-utilities.md): One-job utility classes (typography, borders/radius, truncation) and the arbitrary JIT escape hatch.
+- [05-compositions.md](docs/05-compositions.md): Macro layouts — appshell, `.stack`, `.cluster`, `.with-sidebar`, `.reel` — arrangement only, zero visuals.
+- [06-globals-others.md](docs/06-globals-others.md): Globals, buttons/links, block size limits, and the attribute-driven state rule (`data-variant`, `data-size`, `data-state`).
+- [07-cube-system.md](docs/07-cube-system.md): Why CUBE CSS and how it embraces the cascade instead of fighting it.
+- [08-utopia.md](docs/08-utopia.md): Fluid type/spacing from Utopia integrated directly into the public token vocabulary (no parallel naming system).
+- [09-mode-and-theme.md](docs/09-mode-and-theme.md): Mode (light/dark, OS-backed) vs theme (named palettes) from first principles — where the marker goes, `color-scheme`, resolving three-state preference, the blocking FOUC script, the `:root` + `prefers-color-scheme` + explicit-override layering, and how the shipped runtime and external libraries map onto it.
+
+## Source layout
+
+- [src/index.ts](src/index.ts): Vite plugin entry — `fractalsStyler(options)` plugin, virtual module `virtual:fractals-styler.css`, `enforce: 'pre'`, query-suffix handling, dev-server invalidation.
+- [src/cli.ts](src/cli.ts): `fractals-styler init [dest] [--force]` — copies `templates/` (resolved as `../templates` from `dist/cli.js`), default destination `src/lib/styles`.
+- [src/registry.ts](src/registry.ts): `STATIC_UTILITIES` (flat declarations, the only classes breakpoint suffixes can clone), `DYNAMIC_PREFIXES` (numeric `pad/gap/width/...` families, longest-prefix-first), `BREAKPOINTS` (sm 640 / md 768 / lg 1024 / xl 1280), `resolveDeclarations`.
+- [src/scanner.ts](src/scanner.ts): fast-glob content scan for class tokens and `--pxN` variable usage; deliberately broad regex, ignores `node_modules`/`dist`/`.svelte-kit`/`build`.
+- [src/generate.ts](src/generate.ts): Generates the virtual module's plain CSS from a scan result, including breakpoint media rules and `--pxN` root variables.
+- [src/mode/types.ts](src/mode/types.ts): Mode/theme contract — `Mode`, `ResolvedMode`, `ModeConfig`, `MODE_DEFAULTS` (`data-mode` / `data-theme`, `fractals-styler:mode` storage key), `INLINE_SCRIPT_MARKER`.
+- [src/mode/inline.ts](src/mode/inline.ts): Pure string generation of the blocking `<head>` script that stamps the marker before first paint (`buildInlineScript`, `buildInlineScriptTag`). No DOM — safe to call from the Vite plugin in Node.
+- [src/mode/core.ts](src/mode/core.ts): Framework-agnostic runtime — resolve/persist/apply, `matchMedia` listener, cross-tab `storage` sync, transition suppression, `subscribe()` seam for framework adapters. Singleton via `initMode()`.
+- [src/lib/mode.svelte.ts](src/lib/mode.svelte.ts): Svelte 5 runes adapter — `mode.current`, `preference`, `systemMode`, `theme`, `setMode`/`toggleMode`/`resetMode`/`setTheme`, `configureMode`.
+- [src/lib/ModeToggle.svelte](src/lib/ModeToggle.svelte): Prebuilt toggle. Icon swap is CSS-only (`.mode-light-only`/`.mode-dark-only`) to avoid an SSR hydration mismatch.
+- [src/lib/index.ts](src/lib/index.ts): Published `fractals-styler/lib` entry — `StylerPreview`, `AppShell`, `toc` store, `styler-preview.ts` registry, mode runtime + `ModeToggle`.
+- [src/lib/styler-preview.ts](src/lib/styler-preview.ts): Live token-preview registries (`SEMANTIC_GROUPS`, `TYPE_LEVELS`, `TEXT_SAMPLES`) that must mirror `_tokens.sass`.
+- [templates/index.sass](templates/index.sass): The cascade: `@forward 'mixins'` then `@use tokens → typography → globals → primitives → compositions → buttonslinks`.
+- [templates/_tokens.sass](templates/_tokens.sass): Source of truth for all global custom properties and theme overrides.
+- [templates/_mixins.sass](templates/_mixins.sass): Mobile-first `+bp-sm/md/lg/xl` mixins for project-owned responsive classes.
+
+## Development previews (private, not published)
+
+- [preview/](preview/): Local "design system control room" admin workspace (`pnpm preview`, port 5174).
+- [dev/README.md](dev/README.md): Retained experiments — the self-contained `prototype.html` layout builder (`pnpm preview:builder`) and the archived Svelte port.

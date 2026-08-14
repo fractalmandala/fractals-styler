@@ -3,12 +3,12 @@ export type Declaration = { prop: string; value: string };
 export type Breakpoint = 'sm' | 'md' | 'lg' | 'xl';
 
 /** Media query body for each mobile-first breakpoint suffix:
- *  sm ≥640px, md ≥768px, lg ≥1024px, xl ≥1280px */
+ *  sm ≥640px, md ≥768px, lg ≥1024px, xl ≥1240px */
 export const BREAKPOINTS: Record<Breakpoint, string> = {
 	sm: '(min-width: 640px)',
 	md: '(min-width: 768px)',
 	lg: '(min-width: 1024px)',
-	xl: '(min-width: 1280px)'
+	xl: '(min-width: 1240px)'
 };
 
 export const BREAKPOINT_ORDER: Breakpoint[] = ['sm', 'md', 'lg', 'xl'];
@@ -40,7 +40,25 @@ export const DYNAMIC_PREFIXES: Array<{ prefix: string; prop: string }> = [
 /** Flat declarations for utility classes shipped in the static SASS partials.
  * These are the only classes the breakpoint-suffix system (`.class-sm` etc.) can clone,
  * because their declarations are known statically. Class modifiers with nested selectors
- * (e.g. `.box.xcenter`) are intentionally excluded — see README for the escape-hatch mixin. */
+ * (e.g. `.box.xcenter`) are intentionally excluded — see README for the escape-hatch mixin.
+ *
+ * Scope is the CUBE **Utility** layer only. Deliberately absent, and why:
+ *   - Blocks (`.card`, `.badge`, `.avatar`, `.input`, `.divider`, `.kbd` in
+ *     _primitives.sass). Listing them here would make the JIT re-emit their declarations
+ *     into `virtual:fractals-styler.css`, which loads *after* the static system — silently
+ *     overriding any project customisation of those blocks. A breakpoint clone of a Block
+ *     is not a meaningful thing to ask for either.
+ *   - Compositions (`.stack`, `.cluster`, `.reel`, `.cover`, `.frame`, `.auto-grid`,
+ *     `.switcher`, `.with-sidebar`). Same override hazard, and they are configured through
+ *     custom properties (`--stack-gap`) rather than cloned per breakpoint.
+ *   - Mode-conditional visibility (`.mode-light-only`, `.mode-dark-only`). They depend on
+ *     an ancestor `[data-mode]` marker, so a flat clone would override the override.
+ *   - Element-qualified globals (`button.blank`, `a.link`). Not class-only selectors.
+ *   - Font-family utilities (`.font-jetbrains`, ...). `_fonts.sass` is deliberately NOT
+ *     loaded by `index.sass` — it is opt-in because its `@font-face` URLs must be pointed
+ *     at the project's own font directory first. Registering the classes would make the
+ *     JIT emit them for every project, including ones that never opted in, naming
+ *     families that have no `@font-face` behind them. */
 export const STATIC_UTILITIES: Record<string, Declaration[]> = {
 	box: [
 		{ prop: 'display', value: 'flex' },
@@ -63,6 +81,24 @@ export const STATIC_UTILITIES: Record<string, Declaration[]> = {
 	wfull: [{ prop: 'width', value: '100%' }],
 	h100: [{ prop: 'height', value: '100%' }],
 	hfull: [{ prop: 'height', value: '100%' }],
+	w100vw: [{ prop: 'width', value: '100vw' }],
+	h100vh: [{ prop: 'height', value: '100vh' }],
+	'col-span-2': [{ prop: 'grid-column', value: 'span 2' }],
+	'col-span-3': [{ prop: 'grid-column', value: 'span 3' }],
+	'col-span-4': [{ prop: 'grid-column', value: 'span 4' }],
+	'col-span-5': [{ prop: 'grid-column', value: 'span 5' }],
+	'col-span-6': [{ prop: 'grid-column', value: 'span 6' }],
+	'row-span-2': [{ prop: 'grid-row', value: 'span 2' }],
+	'row-span-3': [{ prop: 'grid-row', value: 'span 3' }],
+	'row-span-4': [{ prop: 'grid-row', value: 'span 4' }],
+	'row-span-5': [{ prop: 'grid-row', value: 'span 5' }],
+	'row-span-6': [{ prop: 'grid-row', value: 'span 6' }],
+	'shadow-sm': [{ prop: 'box-shadow', value: 'var(--shadow-sm)' }],
+	'shadow-md': [{ prop: 'box-shadow', value: 'var(--shadow-md)' }],
+	'shadow-lg': [{ prop: 'box-shadow', value: 'var(--shadow-lg)' }],
+	bg: [{ prop: 'background-color', value: 'var(--bg)' }],
+	'bg-surface': [{ prop: 'background-color', value: 'var(--bg-surface)' }],
+	'bg-raised': [{ prop: 'background-color', value: 'var(--bg-raised)' }],
 	// `.bdr` is intentionally loud: it is a temporary layout-debugging aid.
 	bdr: [{ prop: 'border', value: '1px solid red' }],
 	border: [{ prop: 'border', value: '1px solid var(--border)' }],
@@ -82,13 +118,15 @@ export const STATIC_UTILITIES: Record<string, Declaration[]> = {
 	'text-xs': [{ prop: 'font-size', value: 'var(--text-xs)' }],
 	'text-sm': [{ prop: 'font-size', value: 'var(--text-sm)' }],
 	'text-md': [{ prop: 'font-size', value: 'var(--text-md)' }],
-	'text-bs': [{ prop: 'font-size', value: 'var(--text-bs)' }],
 	'text-lg': [{ prop: 'font-size', value: 'var(--text-lg)' }],
 	'text-xl': [{ prop: 'font-size', value: 'var(--text-xl)' }],
 	'text-2xl': [{ prop: 'font-size', value: 'var(--text-2xl)' }],
 	'text-3xl': [{ prop: 'font-size', value: 'var(--text-3xl)' }],
 	'text-4xl': [{ prop: 'font-size', value: 'var(--text-4xl)' }],
-	'text-5xl': [{ prop: 'font-size', value: 'var(--text-5xl)' }],
+	// Named type roles from _typography.sass — aliases over the scale above.
+	'body-std': [{ prop: 'font-size', value: 'var(--text-lg)' }],
+	'page-title': [{ prop: 'font-size', value: 'var(--text-4xl)' }],
+	eyebrow: [{ prop: 'font-size', value: 'var(--text-sm)' }],
 	'tt-u': [{ prop: 'text-transform', value: 'uppercase' }],
 	'tt-c': [{ prop: 'text-transform', value: 'capitalize' }],
 	'ta-l': [{ prop: 'text-align', value: 'left' }],

@@ -1085,12 +1085,14 @@
             <div class="form-group">
               <div class="form-label">font-size token</div>
               <select id="selFontSize">
-                <option value="font12">12px (font12)</option>
-                <option value="font14" selected>14px (font14)</option>
-                <option value="font16">16px (font16)</option>
-                <option value="font20">20px (font20)</option>
-                <option value="font24">24px (font24)</option>
-                <option value="font32">32px (font32)</option>
+                <option value="text-xs">--text-xs (text-xs)</option>
+                <option value="text-sm">--text-sm (text-sm)</option>
+                <option value="text-md" selected>--text-md (text-md)</option>
+                <option value="text-lg">--text-lg (text-lg)</option>
+                <option value="text-xl">--text-xl (text-xl)</option>
+                <option value="text-2xl">--text-2xl (text-2xl)</option>
+                <option value="text-3xl">--text-3xl (text-3xl)</option>
+                <option value="text-4xl">--text-4xl (text-4xl)</option>
               </select>
             </div>
             <div class="form-group">
@@ -1143,8 +1145,8 @@
             <div class="form-label">mobile (sm) direction</div>
             <select id="selSmDirection">
               <option value="default">default (inherit)</option>
-              <option value="column">sm:column</option>
-              <option value="row">sm:row</option>
+              <option value="column">box-sm (column)</option>
+              <option value="row">row-sm (row)</option>
             </select>
           </div>
         </div>
@@ -1170,12 +1172,12 @@
         <div class="inspector-section">
           <div class="inspector-section-title">Border Radius Token</div>
           <div class="row-ctrl" id="radiusOptions">
-            <div class="pill-opt active" data-radius="radius0">0px</div>
-            <div class="pill-opt" data-radius="radius4">4px</div>
-            <div class="pill-opt" data-radius="radius8">8px</div>
-            <div class="pill-opt" data-radius="radius12">12px</div>
-            <div class="pill-opt" data-radius="radius16">16px</div>
-            <div class="pill-opt" data-radius="radiusfull">full</div>
+            <div class="pill-opt active" data-radius="radius-0">0px</div>
+            <div class="pill-opt" data-radius="radius-4">4px</div>
+            <div class="pill-opt" data-radius="radius-8">8px</div>
+            <div class="pill-opt" data-radius="radius-12">12px</div>
+            <div class="pill-opt" data-radius="radius-16">16px</div>
+            <div class="pill-opt" data-radius="radius-full">full</div>
           </div>
         </div>
 
@@ -1185,10 +1187,9 @@
           <div class="form-group">
             <div class="form-label">surface token / background</div>
             <select id="selSurface">
-              <option value="surface">surface (var(--bg-surface))</option>
-              <option value="panel">panel (var(--bg-app) + border)</option>
-              <option value="raised">raised (var(--bg-raised))</option>
-              <option value="subtle">subtle (var(--slate-100))</option>
+              <option value="bg">bg (var(--bg))</option>
+              <option value="bg-surface" selected>bg-surface (var(--bg-surface))</option>
+              <option value="bg-raised">bg-raised (var(--bg-raised))</option>
               <option value="none">transparent</option>
               <option value="custom">custom hex color</option>
             </select>
@@ -1306,12 +1307,12 @@
         gridCols: options.gridCols || 3,
         colSpan: options.colSpan || 1,
         rowSpan: options.rowSpan || 1,
-        radius: options.radius || 'radius0',
-        surface: options.surface || 'surface',
+        radius: options.radius || 'radius-0',
+        surface: options.surface || 'bg-surface',
         customBg: options.customBg || '#0f172a',
         borderColor: options.borderColor || '#334155',
         textColor: options.textColor || '#cbd5e1',
-        fontSize: options.fontSize || 'font14',
+        fontSize: options.fontSize || 'text-md',
         textAlign: options.textAlign || 'left',
         borderWidth: options.borderWidth || '0',
         shadow: options.shadow || 'none',
@@ -1328,9 +1329,9 @@
             name: 'PancakeStack',
             height: '100vh',
             children: [
-              createNode('box', { name: 'Header', height: 'custom', heightVal: '60', surface: 'panel', content: 'Header' }),
-              createNode('box', { name: 'MainContent', height: 'fill', surface: 'surface', content: 'Main Content Area' }),
-              createNode('box', { name: 'Footer', height: 'custom', heightVal: '50', surface: 'panel', content: 'Footer' })
+              createNode('box', { name: 'Header', height: 'custom', heightVal: '60', surface: 'bg-raised', content: 'Header' }),
+              createNode('box', { name: 'MainContent', height: 'fill', surface: 'bg-surface', content: 'Main Content Area' }),
+              createNode('box', { name: 'Footer', height: 'custom', heightVal: '50', surface: 'bg-raised', content: 'Footer' })
             ]
           });
 
@@ -1340,8 +1341,8 @@
             direction: 'row',
             height: '100vh',
             children: [
-              createNode('box', { name: 'Sidebar', width: 'custom', widthVal: '240', surface: 'panel', content: 'Sidebar Nav' }),
-              createNode('box', { name: 'MainContent', width: 'fill', surface: 'surface', content: 'Main Content' })
+              createNode('box', { name: 'Sidebar', width: 'custom', widthVal: '240', surface: 'bg-raised', content: 'Sidebar Nav' }),
+              createNode('box', { name: 'MainContent', width: 'fill', surface: 'bg-surface', content: 'Main Content' })
             ]
           });
 
@@ -1350,17 +1351,17 @@
             name: 'HTML5Layout',
             height: '100vh',
             children: [
-              createNode('box', { name: 'Header', height: 'custom', heightVal: '60', surface: 'panel', content: 'Header' }),
+              createNode('box', { name: 'Header', height: 'custom', heightVal: '60', surface: 'bg-raised', content: 'Header' }),
               createNode('row', {
                 name: 'BodyRow',
                 direction: 'row',
                 height: 'fill',
                 children: [
-                  createNode('box', { name: 'Sidebar', width: 'custom', widthVal: '220', surface: 'panel', content: 'Sidebar' }),
-                  createNode('box', { name: 'Article', width: 'fill', surface: 'surface', content: 'Main Article' })
+                  createNode('box', { name: 'Sidebar', width: 'custom', widthVal: '220', surface: 'bg-raised', content: 'Sidebar' }),
+                  createNode('box', { name: 'Article', width: 'fill', surface: 'bg-surface', content: 'Main Article' })
                 ]
               }),
-              createNode('box', { name: 'Footer', height: 'custom', heightVal: '50', surface: 'panel', content: 'Footer' })
+              createNode('box', { name: 'Footer', height: 'custom', heightVal: '50', surface: 'bg-raised', content: 'Footer' })
             ]
           });
 
@@ -1369,18 +1370,18 @@
             name: 'HTML5_2_Layout',
             height: '100vh',
             children: [
-              createNode('box', { name: 'Header', height: 'custom', heightVal: '60', surface: 'panel', content: 'Header' }),
+              createNode('box', { name: 'Header', height: 'custom', heightVal: '60', surface: 'bg-raised', content: 'Header' }),
               createNode('row', {
                 name: 'BodyRow',
                 direction: 'row',
                 height: 'fill',
                 children: [
-                  createNode('box', { name: 'Nav', width: 'custom', widthVal: '180', surface: 'panel', content: 'Left Nav' }),
-                  createNode('box', { name: 'Main', width: 'fill', surface: 'surface', content: 'Main Content' }),
-                  createNode('box', { name: 'Aside', width: 'custom', widthVal: '200', surface: 'panel', content: 'Right Aside' })
+                  createNode('box', { name: 'Nav', width: 'custom', widthVal: '180', surface: 'bg-raised', content: 'Left Nav' }),
+                  createNode('box', { name: 'Main', width: 'fill', surface: 'bg-surface', content: 'Main Content' }),
+                  createNode('box', { name: 'Aside', width: 'custom', widthVal: '200', surface: 'bg-raised', content: 'Right Aside' })
                 ]
               }),
-              createNode('box', { name: 'Footer', height: 'custom', heightVal: '50', surface: 'panel', content: 'Footer' })
+              createNode('box', { name: 'Footer', height: 'custom', heightVal: '50', surface: 'bg-raised', content: 'Footer' })
             ]
           });
 
@@ -1391,7 +1392,7 @@
             gridCols: 12,
             gap: 4,
             children: Array.from({ length: 12 }, (_, i) =>
-              createNode('box', { name: `Col_${i+1}`, surface: 'panel', content: `${i+1}` })
+              createNode('box', { name: `Col_${i+1}`, surface: 'bg-raised', content: `${i+1}` })
             )
           });
 
@@ -1402,11 +1403,11 @@
             gridCols: 4,
             gap: 8,
             children: [
-              createNode('box', { name: 'HeroTile', height: 'custom', heightVal: '160', colSpan: 2, rowSpan: 2, surface: 'panel', content: 'Hero Tile' }),
-              createNode('box', { name: 'Tile1', surface: 'panel', content: 'Tile 1' }),
-              createNode('box', { name: 'Tile2', surface: 'panel', content: 'Tile 2' }),
-              createNode('box', { name: 'Tile3', surface: 'panel', content: 'Tile 3' }),
-              createNode('box', { name: 'Tile4', surface: 'panel', content: 'Tile 4' })
+              createNode('box', { name: 'HeroTile', height: 'custom', heightVal: '160', colSpan: 2, rowSpan: 2, surface: 'bg-raised', content: 'Hero Tile' }),
+              createNode('box', { name: 'Tile1', surface: 'bg-raised', content: 'Tile 1' }),
+              createNode('box', { name: 'Tile2', surface: 'bg-raised', content: 'Tile 2' }),
+              createNode('box', { name: 'Tile3', surface: 'bg-raised', content: 'Tile 3' }),
+              createNode('box', { name: 'Tile4', surface: 'bg-raised', content: 'Tile 4' })
             ]
           });
 
@@ -1417,7 +1418,7 @@
             gridCols: 3,
             gap: 8,
             children: Array.from({ length: 9 }, (_, i) =>
-              createNode('box', { name: `Cell_${i+1}`, height: 'custom', heightVal: '80', surface: 'panel', content: `Cell ${i+1}` })
+              createNode('box', { name: `Cell_${i+1}`, height: 'custom', heightVal: '80', surface: 'bg-raised', content: `Cell ${i+1}` })
             )
           });
 
@@ -1428,7 +1429,7 @@
             gridCols: 4,
             gap: 8,
             children: Array.from({ length: 16 }, (_, i) =>
-              createNode('box', { name: `Cell_${i+1}`, height: 'custom', heightVal: '70', surface: 'panel', content: `${i+1}` })
+              createNode('box', { name: `Cell_${i+1}`, height: 'custom', heightVal: '70', surface: 'bg-raised', content: `${i+1}` })
             )
           });
 
@@ -1437,7 +1438,7 @@
             name: 'InfiniteRows',
             gap: 6,
             children: Array.from({ length: 5 }, (_, i) =>
-              createNode('row', { name: `Row_${i+1}`, direction: 'row', height: 'custom', heightVal: '50', surface: 'panel', content: `Row Item ${i+1}` })
+              createNode('row', { name: `Row_${i+1}`, direction: 'row', height: 'custom', heightVal: '50', surface: 'bg-raised', content: `Row Item ${i+1}` })
             )
           });
 
@@ -1447,7 +1448,7 @@
             direction: 'row',
             gap: 6,
             children: Array.from({ length: 5 }, (_, i) =>
-              createNode('box', { name: `Col_${i+1}`, width: 'custom', widthVal: '140', height: 'custom', heightVal: '160', surface: 'panel', content: `Col Item ${i+1}` })
+              createNode('box', { name: `Col_${i+1}`, width: 'custom', widthVal: '140', height: 'custom', heightVal: '160', surface: 'bg-raised', content: `Col Item ${i+1}` })
             )
           });
 
@@ -1648,16 +1649,15 @@
         if (node.maxHVal) style += ` max-height: ${node.maxHVal.includes('px') || node.maxHVal.includes('rem') ? node.maxHVal : node.maxHVal + 'px'};`;
       }
 
-      if (node.surface === 'surface') style += ' background: var(--bg-surface);';
-      else if (node.surface === 'panel') style += ' background: var(--bg-raised); border: 1px solid var(--border);';
-      else if (node.surface === 'raised') style += ' background: var(--bg-hover);';
-      else if (node.surface === 'subtle') style += ' background: #475569;';
+      if (node.surface === 'bg') style += ' background: var(--bg);';
+      else if (node.surface === 'bg-surface') style += ' background: var(--bg-surface);';
+      else if (node.surface === 'bg-raised') style += ' background: var(--bg-raised);';
       else if (node.surface === 'custom') style += ` background: ${node.customBg};`;
 
       if (node.borderWidth && node.borderWidth !== '0') style += ` border: ${node.borderWidth} solid ${node.borderColor || '#334155'};`;
       if (node.shadow && node.shadow !== 'none') style += ' box-shadow: 0 10px 25px rgba(0,0,0,0.4);';
 
-      const radMap = { radius2: '2px', radius4: '4px', radius8: '8px', radius12: '12px', radius16: '16px', radiusfull: '999px' };
+      const radMap = { radius-2: '2px', radius-4: '4px', radius-8: '8px', radius-12: '12px', radius-16: '16px', radius-full: '999px' };
       if (radMap[node.radius]) style += ` border-radius: ${radMap[node.radius]};`;
 
       el.style.cssText = style;
@@ -1840,7 +1840,7 @@
           name: 'HeaderBar',
           direction: 'row',
           padding: 16,
-          surface: 'panel',
+          surface: 'bg-raised',
           children: [
             createNode('box', { name: 'Logo', primitive: 'box', padding: 0, content: '⚡ Logo' }),
             createNode('row', { name: 'Nav', primitive: 'row', padding: 0, gap: 12, children: [
@@ -1857,7 +1857,7 @@
           direction: 'row',
           padding: 4,
           gap: 4,
-          surface: 'panel',
+          surface: 'bg-raised',
           children: [
             createNode('button', { name: 'Tab1', primitive: 'button', buttonVariant: 'primary', content: 'Overview' }),
             createNode('button', { name: 'Tab2', primitive: 'button', buttonVariant: 'quiet', content: 'Analytics' }),
@@ -1871,8 +1871,8 @@
           name: 'MediaCard',
           padding: 16,
           gap: 12,
-          surface: 'panel',
-          radius: 'radius8',
+          surface: 'bg-raised',
+          radius: 'radius-8',
           children: [
             createNode('box', { name: 'CardImage', height: 'custom', heightVal: '120', surface: 'raised', content: 'Image Banner' }),
             createNode('box', { name: 'CardTitle', padding: 0, content: 'Card Title' }),
@@ -1886,8 +1886,8 @@
           name: 'HeroSection',
           padding: 32,
           gap: 16,
-          surface: 'panel',
-          radius: 'radius12',
+          surface: 'bg-raised',
+          radius: 'radius-12',
           alignItems: 'center',
           children: [
             createNode('box', { name: 'HeroHeading', padding: 0, textAlign: 'center', content: 'Build Faster with Styler' }),
@@ -1901,8 +1901,8 @@
           name: 'TextInputGroup',
           padding: 8,
           gap: 4,
-          surface: 'panel',
-          radius: 'radius4',
+          surface: 'bg-raised',
+          radius: 'radius-4',
           content: 'Input Field Label'
         });
       }
@@ -1913,8 +1913,8 @@
           direction: 'row',
           padding: 8,
           gap: 8,
-          surface: 'panel',
-          radius: 'radius4',
+          surface: 'bg-raised',
+          radius: 'radius-4',
           content: 'Enable Feature'
         });
       }
@@ -1992,7 +1992,7 @@
       document.getElementById('grpCustomHeight').style.display = target.height === 'custom' ? 'flex' : 'none';
       document.getElementById('grpMinMaxH').style.display = target.height === 'minmax' ? 'grid' : 'none';
 
-      document.getElementById('selFontSize').value = target.fontSize || 'font14';
+      document.getElementById('selFontSize').value = target.fontSize || 'text-md';
       document.getElementById('selTextAlign').value = target.textAlign || 'left';
       document.getElementById('inpTextColor').value = target.textColor || '#cbd5e1';
       document.getElementById('selBorderWidth').value = target.borderWidth || '0';
@@ -2034,7 +2034,7 @@
       }
 
       document.querySelectorAll('#radiusOptions .pill-opt').forEach(pill => {
-        if (pill.getAttribute('data-radius') === (target.radius || 'radius0')) {
+        if (pill.getAttribute('data-radius') === (target.radius || 'radius-0')) {
           pill.classList.add('active');
         } else {
           pill.classList.remove('active');
@@ -2175,7 +2175,7 @@
         const wrapperNode = createNode('box', {
           name: target.name + 'Wrapper',
           padding: 16,
-          surface: 'panel',
+          surface: 'bg-raised',
           children: [target]
         });
         res.parent.children[res.index] = wrapperNode;
@@ -2192,7 +2192,7 @@
           name: target.name + 'Wrapper',
           direction: 'row',
           padding: 16,
-          surface: 'panel',
+          surface: 'bg-raised',
           children: [target]
         });
         res.parent.children[res.index] = wrapperNode;
@@ -2522,7 +2522,7 @@
       if (node.padding > 0) classes.push(`pad${node.padding}`);
       if (node.gap > 0) classes.push(`gap${node.gap}`);
       if (node.marginBot > 0) classes.push(`marginbot${node.marginBot}`);
-      if (node.radius && node.radius !== 'radius0') classes.push(node.radius);
+      if (node.radius && node.radius !== 'radius-0') classes.push(node.radius);
       if (node.surface !== 'none' && node.surface !== 'custom') classes.push(node.surface);
       if (node.fontSize) classes.push(node.fontSize);
       if (node.shadow && node.shadow !== 'none') classes.push(node.shadow);

@@ -5,9 +5,9 @@ export function generateSass(node: BuilderNode, depth = 0): string {
 	if (node.primitive === 'button') {
 		const clsMap: Record<string, string> = {
 			default: '.button',
-			primary: '.button-primary',
-			quiet: '.button-quiet',
-			icon: '.icon-button'
+			primary: ".button[data-variant='primary']",
+			quiet: ".button[data-variant='quiet']",
+			icon: ".button[data-variant='icon']"
 		};
 		return `${indent}${clsMap[node.buttonVariant || 'default'] || '.button'}\n`;
 	}
@@ -85,8 +85,11 @@ export function generateSass(node: BuilderNode, depth = 0): string {
 	if (node.gap > 0) out += `${indent}\tgap: ${node.gap}px\n`;
 	if (node.marginBot > 0) out += `${indent}\tmargin-bottom: ${node.marginBot}px\n`;
 	if (node.surface === 'custom') out += `${indent}\tbackground-color: ${node.customBg}\n`;
-	else if (node.surface !== 'none')
-		out += `${indent}\tbackground-color: var(--bg-${node.surface})\n`;
+	else if (node.surface !== 'none') {
+		// SurfaceToken values are the class names, which are `--bg`, `--bg-surface`,
+		// `--bg-raised`. The token name is the class name — no prefix arithmetic.
+		out += `${indent}\tbackground-color: var(--${node.surface})\n`;
+	}
 
 	if (node.borderWidth && node.borderWidth !== '0')
 		out += `${indent}\tborder-width: ${node.borderWidth}\n`;
@@ -104,14 +107,9 @@ export function generateSass(node: BuilderNode, depth = 0): string {
 export function generateHtml(node: BuilderNode, depth = 0): string {
 	const indent = '  '.repeat(depth);
 	if (node.primitive === 'button') {
-		const clsMap: Record<string, string> = {
-			default: 'button',
-			primary: 'button-primary',
-			quiet: 'button-quiet',
-			icon: 'icon-button'
-		};
-		const cls = clsMap[node.buttonVariant || 'default'] || 'button';
-		return `${indent}<button class="${cls}">${node.content || 'Button'}</button>\n`;
+		const variant = node.buttonVariant || 'default';
+		const attr = variant === 'default' ? '' : ` data-variant="${variant}"`;
+		return `${indent}<button class="button"${attr}>${node.content || 'Button'}</button>\n`;
 	}
 
 	const classes: string[] = [];
@@ -126,7 +124,11 @@ export function generateHtml(node: BuilderNode, depth = 0): string {
 	if (node.colSpan && node.colSpan > 1) classes.push(`col-span-${node.colSpan}`);
 	if (node.rowSpan && node.rowSpan > 1) classes.push(`row-span-${node.rowSpan}`);
 
-	if (node.smDirection && node.smDirection !== 'default') classes.push(`sm:${node.smDirection}`);
+	// Breakpoint variants use the `-sm` suffix the JIT scanner recognises. A `sm:` prefix
+	// was emitted here previously and matched nothing in the generated CSS.
+	if (node.smDirection && node.smDirection !== 'default') {
+		classes.push(node.smDirection === 'row' ? 'row-sm' : 'box-sm');
+	}
 	if (node.width === '100%') classes.push('w100');
 	else if (node.width === '100vw') classes.push('w100vw');
 	else if (node.width === 'fill') classes.push('grow');
@@ -138,7 +140,7 @@ export function generateHtml(node: BuilderNode, depth = 0): string {
 	if (node.padding > 0) classes.push(`pad${node.padding}`);
 	if (node.gap > 0) classes.push(`gap${node.gap}`);
 	if (node.marginBot > 0) classes.push(`marginbot${node.marginBot}`);
-	if (node.radius && node.radius !== 'radius0') classes.push(node.radius);
+	if (node.radius && node.radius !== 'radius-0') classes.push(node.radius);
 	if (node.surface !== 'none' && node.surface !== 'custom') classes.push(node.surface);
 	if (node.fontSize) classes.push(node.fontSize);
 	if (node.shadow && node.shadow !== 'none') classes.push(node.shadow);

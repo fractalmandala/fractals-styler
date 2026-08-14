@@ -4,7 +4,7 @@
 	 *
 	 * Renders the fixed skeleton:
 	 *   section.appshell > header.appheader + main.appbody + footer.appfooter
-	 *   main.appbody > aside.sidebarleft + article.bodymain + aside.sidebarright
+	 *   main.appbody > aside.sidebar-left + article.body-main + aside.sidebar-right
 	 *
 	 * All visual arrangement lives in _compositions.sass; this component only
 	 * wires the snippets. Sidebar visibility is
@@ -16,7 +16,7 @@
 	 *     {#snippet sidebarleft()} … {/snippet}
 	 *     {#snippet sidebarright()} … {/snippet}
 	 *     {#snippet footer()} … {/snippet}
-	 *     … page content (bodymain) …
+	 *     … page content (body-main) …
 	 *   </AppShell>
 	 */
 	import type { Snippet } from 'svelte';
@@ -69,17 +69,17 @@
 		data-mobile-open={mobileOpen ? 'true' : 'false'}
 	>
 		{#if showLeft}
-			<aside class="sidebarleft">
+			<aside class="sidebar-left">
 				{@render sidebarleft?.()}
 			</aside>
 		{/if}
 
-		<article class="bodymain">
+		<article class="body-main">
 			{@render children?.()}
 		</article>
 
 		{#if showRight}
-			<aside class="sidebarright">
+			<aside class="sidebar-right">
 				{@render sidebarright?.()}
 			</aside>
 		{/if}
@@ -115,7 +115,7 @@
 
 // 1. App shell ---------------------------------------------------------
 // section.appshell > header.appheader + main.appbody + footer.appfooter
-// main.appbody > aside.sidebarleft + article.bodymain + aside.sidebarright
+// main.appbody > aside.sidebar-left + article.body-main + aside.sidebar-right
 
 .appshell
 	position: relative
@@ -145,14 +145,14 @@
 	min-height: var(--footer-height)
 	padding-inline: var(--shell-pad, 20px)
 
-// Middle reading column. In the canonical markup <article class="bodymain">
+// Middle reading column. In the canonical markup <article class="body-main">
 // IS the middle cell; its content is constrained to a comfortable measure
 // that grows from --body-min to --body-max and stays centred.
-.bodymain
+.body-main
 	min-width: 0
 	display: flex
 	flex-direction: column
-	padding-block: var(--space-8)
+	padding-block: var(--space-m)
 	padding-inline: var(--shell-pad, 20px)
 	> :global(*)
 		width: 100%
@@ -160,7 +160,7 @@
 		margin-inline: auto
 
 // Sidebars. Mobile-first: both hidden.
-.sidebarleft, .sidebarright
+.sidebar-left, .sidebar-right
 	min-width: 0
 	display: none
 
@@ -169,16 +169,16 @@
 	.appbody[data-left='true']
 		grid-template-columns: clamp(var(--sidebar-min, 200px), 20vw, var(--sidebar-max, 360px)) minmax(0, 1fr)
 
-	.sidebarleft
+	.sidebar-left
 		display: flex
 		flex-direction: column
 		position: sticky
 		top: var(--header-height)
 		height: calc(100vh - var(--header-height))
 		overflow-y: auto
-		padding: var(--space-8) var(--space-4)
+		padding: var(--space-m) var(--space-xs)
 
-	.sidebarright
+	.sidebar-right
 		display: none
 
 @media (min-width: 1201px)
@@ -190,12 +190,12 @@
 	.appbody[data-left='false'][data-right='true']
 		grid-template-columns: minmax(0, 1fr) clamp(var(--sidebar-min, 200px), 20vw, var(--sidebar-max, 360px))
 
-	.sidebarright
+	.sidebar-right
 		display: flex
 		flex-direction: column
 		position: sticky
 		top: var(--header-height)
 		height: calc(100vh - var(--header-height))
 		overflow-y: auto
-		padding: var(--space-8) var(--space-4)
+		padding: var(--space-m) var(--space-xs)
 </style>

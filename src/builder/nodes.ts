@@ -35,12 +35,13 @@ export function createNode(
 		gridCols: options.gridCols || 3,
 		colSpan: options.colSpan || 1,
 		rowSpan: options.rowSpan || 1,
-		radius: options.radius || 'radius0',
-		surface: options.surface || 'surface',
+		radius: options.radius || 'radius-0',
+		surface: options.surface || 'bg-surface',
 		customBg: options.customBg || '#0f172a',
 		borderColor: options.borderColor || '#334155',
 		textColor: options.textColor || '#cbd5e1',
-		fontSize: options.fontSize || 'font14',
+		// `font14` was the old default and is not a class in any template partial.
+		fontSize: options.fontSize || 'text-md',
 		textAlign: options.textAlign || 'left',
 		borderWidth: options.borderWidth || '0',
 		shadow: options.shadow || 'none',
@@ -96,20 +97,20 @@ export function getLayoutTemplate(key: string): BuilderNode {
 						name: 'Header',
 						height: 'custom',
 						heightVal: '60',
-						surface: 'panel',
+						surface: 'bg-raised',
 						content: 'Header'
 					}),
 					createNode('box', {
 						name: 'MainContent',
 						height: 'fill',
-						surface: 'surface',
+						surface: 'bg-surface',
 						content: 'Main Content Area'
 					}),
 					createNode('box', {
 						name: 'Footer',
 						height: 'custom',
 						heightVal: '50',
-						surface: 'panel',
+						surface: 'bg-raised',
 						content: 'Footer'
 					})
 				]
@@ -125,13 +126,13 @@ export function getLayoutTemplate(key: string): BuilderNode {
 						name: 'Sidebar',
 						width: 'custom',
 						widthVal: '240',
-						surface: 'panel',
+						surface: 'bg-raised',
 						content: 'Sidebar Nav'
 					}),
 					createNode('box', {
 						name: 'MainContent',
 						width: 'fill',
-						surface: 'surface',
+						surface: 'bg-surface',
 						content: 'Main Content'
 					})
 				]
@@ -146,7 +147,7 @@ export function getLayoutTemplate(key: string): BuilderNode {
 						name: 'Header',
 						height: 'custom',
 						heightVal: '60',
-						surface: 'panel',
+						surface: 'bg-raised',
 						content: 'Header'
 					}),
 					createNode('row', {
@@ -158,13 +159,13 @@ export function getLayoutTemplate(key: string): BuilderNode {
 								name: 'Sidebar',
 								width: 'custom',
 								widthVal: '220',
-								surface: 'panel',
+								surface: 'bg-raised',
 								content: 'Sidebar'
 							}),
 							createNode('box', {
 								name: 'Article',
 								width: 'fill',
-								surface: 'surface',
+								surface: 'bg-surface',
 								content: 'Main Article'
 							})
 						]
@@ -173,7 +174,7 @@ export function getLayoutTemplate(key: string): BuilderNode {
 						name: 'Footer',
 						height: 'custom',
 						heightVal: '50',
-						surface: 'panel',
+						surface: 'bg-raised',
 						content: 'Footer'
 					})
 				]
@@ -188,7 +189,7 @@ export function getLayoutTemplate(key: string): BuilderNode {
 				children: Array.from({ length: 12 }, (_, i) =>
 					createNode('box', {
 						name: `Col_${i + 1}`,
-						surface: 'panel',
+						surface: 'bg-raised',
 						content: `${i + 1}`
 					})
 				)

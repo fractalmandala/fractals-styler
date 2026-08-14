@@ -16,5 +16,17 @@
 		@content
 
 =bp-xl
-	@media (min-width: 1280px)
+	@media (min-width: 1240px)
+		@content
+
+// Container query mixins for component-level responsiveness
+=cq
+	container-type: inline-size
+
+=cq-min($width)
+	@container (min-width: #{$width})
+		@content
+
+=cq-max($width)
+	@container (max-width: #{$width})
 		@content

@@ -1,0 +1,44 @@
+{
+  "color": {
+    "primitive": {
+      "openColor": {
+        "gray": {
+          "0": { "$type": "color", "$value": "#f8f9fa" },
+          "9": { "$type": "color", "$value": "#212529" }
+        },
+        "indigo": {
+          "6": { "$type": "color", "$value": "#4c6ef5" }
+        },
+        "red": {
+          "6": { "$type": "color", "$value": "#fa5252" }
+        }
+      }
+    },
+    "semantic": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.primitive.openColor.gray.0}"
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.primitive.openColor.gray.9}"
+      },
+      "primary": {
+        "base": {
+          "$type": "color",
+          "$value": "{color.primitive.openColor.indigo.6}"
+        },
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.primitive.openColor.gray.0}"
+        }
+      },
+      "destructive": {
+        "base": {
+          "$type": "color",
+          "$value": "{color.primitive.openColor.red.6}"
+        }
+      }
+    }
+  }
+}

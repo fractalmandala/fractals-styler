@@ -15,8 +15,6 @@ The scale values live in `_tokens.sass`. `_typography.sass` only maps public cla
 	font-size: var(--text-sm)
 .text-md
 	font-size: var(--text-md)
-.text-bs
-	font-size: var(--text-bs)
 .text-lg
 	font-size: var(--text-lg)
 .text-xl
@@ -27,8 +25,6 @@ The scale values live in `_tokens.sass`. `_typography.sass` only maps public cla
 	font-size: var(--text-3xl)
 .text-4xl
 	font-size: var(--text-4xl)
-.text-5xl
-	font-size: var(--text-5xl)
 ```
 
 Edit scale values in `_tokens.sass`, not in these classes.

@@ -1,6 +1,8 @@
 import type { Plugin, ViteDevServer } from 'vite';
 import { scanFiles } from './scanner.js';
 import { generateCss } from './generate.js';
+import { buildInlineScript } from './mode/inline.js';
+import { INLINE_SCRIPT_MARKER, type ModeConfig } from './mode/types.js';
 
 export interface FractalsStylerOptions {
 	/** Glob patterns (relative to the Vite project root) to scan for utility classes
@@ -8,6 +10,15 @@ export interface FractalsStylerOptions {
 	content?: string[];
 	/** Unit format for dynamic numeric utilities ('px' | 'rem'). Defaults to 'px'. */
 	unit?: 'px' | 'rem';
+	/** Inject the blocking mode script into the HTML entry, preventing a flash of the
+	 * wrong palette before hydration. Pass `false` to opt out, or a config object to
+	 * override attribute/storage names. Defaults to on.
+	 *
+	 * Applies to Vite's HTML entry (`index.html`). SvelteKit renders `src/app.html`
+	 * through its own pipeline, which does not run `transformIndexHtml` on a production
+	 * build — `fractals-styler init` patches `src/app.html` directly for that case, and
+	 * the marker attribute keeps the two mechanisms from double-injecting. */
+	mode?: ModeConfig | false;
 }
 
 const VIRTUAL_ID = 'virtual:fractals-styler.css';
@@ -27,6 +38,7 @@ const WATCHED_EXT_RE = /\.(svelte|html|js|ts|jsx|tsx|mjs)$/;
 export default function fractalsStyler(options: FractalsStylerOptions = {}): Plugin {
 	const content = options.content ?? DEFAULT_CONTENT;
 	const unit = options.unit ?? 'px';
+	const modeOptions = options.mode === false ? null : (options.mode ?? {});
 	let root = process.cwd();
 
 	async function build(): Promise<string> {
@@ -60,6 +72,30 @@ export default function fractalsStyler(options: FractalsStylerOptions = {}): Plu
 			if (id === RESOLVED_ID || id.startsWith(RESOLVED_ID + '?')) return build();
 		},
 
+		transformIndexHtml: {
+			// `pre` so the script lands ahead of anything later plugins add. Within the
+			// document it still needs `head-prepend` — running before the stylesheet
+			// links is the entire point, otherwise the browser paints once first.
+			order: 'pre',
+			handler(html: string) {
+				if (!modeOptions) return;
+				// Idempotency guard. A SvelteKit project has its `app.html` patched by the
+				// CLI, and SvelteKit *does* run this hook in dev — without the check the
+				// script would appear twice in development and once in production.
+				if (html.includes(INLINE_SCRIPT_MARKER)) return;
+				return [
+					{
+						tag: 'script',
+						attrs: modeOptions.nonce
+							? { [INLINE_SCRIPT_MARKER]: '', nonce: modeOptions.nonce }
+							: { [INLINE_SCRIPT_MARKER]: '' },
+						children: buildInlineScript(modeOptions),
+						injectTo: 'head-prepend' as const
+					}
+				];
+			}
+		},
+
 		configureServer(server: ViteDevServer) {
 			server.watcher.on('all', (_event, file) => {
 				if (!WATCHED_EXT_RE.test(file)) return;
@@ -73,6 +109,9 @@ export default function fractalsStyler(options: FractalsStylerOptions = {}): Plu
 }
 
 export { fractalsStyler };
+export { buildInlineScript, buildInlineScriptTag } from './mode/inline.js';
+export { MODE_DEFAULTS, INLINE_SCRIPT_MARKER, resolveConfig } from './mode/types.js';
+export type { Mode, ResolvedMode, ModeConfig, ModeState, ModeController } from './mode/types.js';
 export { generateCss } from './generate.js';
 export { scanFiles } from './scanner.js';
 export {

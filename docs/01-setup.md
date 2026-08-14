@@ -54,6 +54,7 @@ You should now have:
 ```
 src/lib/styles/
 ├── _tokens.sass
+├── _colors.sass
 ├── _fonts.sass
 ├── _typography.sass
 ├── _globals.sass
@@ -85,6 +86,7 @@ Retain this cascade and ranking in the `index.sass`:
 ```
 @forward 'mixins'
 @use 'tokens'
+@use 'colors'
 @use 'typography'
 @use 'globals'
 @use 'primitives'
@@ -109,7 +111,7 @@ Start with the finite, token-driven vocabulary:
 ```svelte
 <article class="box stack border radius-12">
 	<h2 class="text-xl fw600">A token-driven panel</h2>
-	<p class="text-bs text-secondary">The same public classes work across projects.</p>
+	<p class="text-sm text-secondary">The same public classes work across projects.</p>
 </article>
 ```
 

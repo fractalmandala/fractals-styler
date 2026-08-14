@@ -9,6 +9,8 @@
  * other runtime imports here — runs anywhere a browser is present.
  */
 
+import { setMode } from '../mode/core.js';
+
 export const STORAGE_KEY = 'fractals-styler:overrides';
 
 export interface TokenLevel {
@@ -31,10 +33,13 @@ export type Overrides = Record<string, string>;
 /* Registries — ground truth for what the showcase renders             */
 /* ------------------------------------------------------------------ */
 
-/** Typography scale declared in `_tokens.sass` and consumed by `_typography.sass`. */
+/** Typography scale declared in `_tokens.sass` and consumed by `_typography.sass`.
+ * Keys must match the template exactly — `bs` and `5xl` were listed here but have never
+ * existed in `_tokens.sass`, so the showcase rendered two swatches with no value behind
+ * them and offered overrides for tokens nothing consumed. */
 export const TYPE_LEVELS: TokenLevel[] = (() => {
 	const levels: TokenLevel[] = [];
-	for (const k of ['xs', 'sm', 'md', 'bs', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl']) {
+	for (const k of ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl']) {
 		const cls = 'text-' + k;
 		levels.push({ var: '--' + cls, class: cls, label: '--' + cls });
 	}
@@ -54,6 +59,22 @@ export const SEMANTIC_GROUPS: ColorGroup[] = [
 	{
 		title: 'Feedback',
 		tokens: ['--feedback-danger', '--feedback-warning', '--feedback-success', '--feedback-info']
+	},
+	// The `_colors.sass` semantic layer. It is part of the compiled cascade (index.sass
+	// `@use`s it after tokens), so the showcase would otherwise claim to mirror the
+	// system while omitting half of its colour vocabulary. `--border`, `--ring` and
+	// `--input` are owned by `_tokens.sass` and appear under Borders/Theme above.
+	{
+		title: 'Surfaces (colors layer)',
+		tokens: ['--background', '--foreground', '--card', '--popover', '--muted', '--accent']
+	},
+	{
+		title: 'Actions (colors layer)',
+		tokens: ['--primary', '--secondary', '--destructive']
+	},
+	{
+		title: 'Charts (colors layer)',
+		tokens: ['--chart-1', '--chart-2', '--chart-3', '--chart-4', '--chart-5']
 	}
 ];
 
@@ -62,7 +83,13 @@ export const TEXT_SAMPLES: { var: string; class: string; label: string; inverse?
 	{ var: '--text-primary', class: 'text-primary', label: 'Primary' },
 	{ var: '--text-secondary', class: 'text-secondary', label: 'Secondary' },
 	{ var: '--text-muted', class: 'text-muted', label: 'Muted' },
-	{ var: '--text-inverse', class: 'text-inverse', label: 'Inverse', inverse: true }
+	{ var: '--text-inverse', class: 'text-inverse', label: 'Inverse', inverse: true },
+	// The remaining colour utilities in `_typography.sass`, previously unrepresented.
+	{ var: '--theme', class: 'text-theme', label: 'Theme' },
+	{ var: '--feedback-danger', class: 'text-danger', label: 'Danger' },
+	{ var: '--feedback-warning', class: 'text-warning', label: 'Warning' },
+	{ var: '--feedback-success', class: 'text-success', label: 'Success' },
+	{ var: '--feedback-info', class: 'text-info', label: 'Info' }
 ];
 
 /* ------------------------------------------------------------------ */
@@ -221,18 +248,32 @@ export class OverrideHistory {
 }
 
 /* ------------------------------------------------------------------ */
-/* Theme                                                               */
+/* Mode                                                                */
 /* ------------------------------------------------------------------ */
 
+/** @deprecated Naming holdover — this is the *mode* axis (light/dark), not a named
+ * theme. Use `ResolvedMode` from `fractals-styler/mode`. Kept as an alias so the
+ * showcase components keep compiling through the 2.x line. */
 export type Theme = 'light' | 'dark';
 
+/** The mode the page is currently painting.
+ *
+ * Reads `data-mode` and falls back to the OS query. `data-theme` is still consulted as a
+ * deprecated alias, matching the selector aliases in `_tokens.sass`, so a project that
+ * has not migrated its markup yet still previews correctly. */
 export function currentTheme(): Theme {
 	if (typeof document === 'undefined') return 'light';
-	const explicit = document.documentElement.dataset.theme;
+	const el = document.documentElement;
+	const explicit = el.getAttribute('data-mode') ?? el.getAttribute('data-theme');
 	if (explicit === 'light' || explicit === 'dark') return explicit;
+	if (el.classList.contains('dark')) return 'dark';
 	return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
+/** Switch the mode. Delegates to the shared runtime so the showcase toggle persists,
+ * suppresses transitions and syncs across tabs exactly like the app's own toggle,
+ * instead of writing a one-off attribute that the runtime would later overwrite. */
 export function setTheme(t: Theme): void {
-	document.documentElement.dataset.theme = t;
+	if (typeof document === 'undefined') return;
+	setMode(t);
 }

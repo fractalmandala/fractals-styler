@@ -34,18 +34,19 @@ The files under `$lib/styles` are project-owned copies created by `fractals-styl
 
 ### Deeper reference
 
-The installed package contains a progressive guide under `node_modules/fractals-styler/fractal-styler-guide`. Read only the file required for the current task:
+The installed package contains a progressive guide under `docs`. Read only the file required for the current task:
 
 | Question                                                                   | Read                   |
 | -------------------------------------------------------------------------- | ---------------------- |
 | How is the package installed, loaded or configured?                        | `01-setup.md`          |
 | What are the naming, layering and CUBE rules?                              | `02-principles.md`     |
-| Which token families exist and how do themes work?                         | `03-tokens.md`         |
+| Which token families exist and how do modes/themes work?                   | `03-tokens.md`         |
 | Which utility classes and responsive forms are available?                  | `04-utilities.md`      |
 | Which macro and intrinsic layouts are available?                           | `05-compositions.md`   |
 | What belongs in globals, controls, blocks and attribute states?            | `06-globals-others.md` |
 | Why does the project use CUBE instead of BEM?                              | `07-cube-system.md`    |
 | How is fluid type and spacing integrated into the public token vocabulary? | `08-utopia.md`         |
+| How do light/dark mode, the toggle and named themes work?                  | `09-mode-and-theme.md` |
 
 Do not read the entire guide for a small styling change. Start with the installed Sass owner, then open the matching guide file only when the local implementation does not answer the question.
 

@@ -1,6 +1,6 @@
 {
 	"name": "fractals-styler",
-	"version": "2.2.1",
+	"version": "2.3.0",
 	"packageManager": "pnpm@11.20.0",
 	"description": "A BEM-free, CUBE-inspired SASS design-system scaffold with token utilities, reusable compositions, an optional JIT escape hatch, and a live token preview.",
 	"license": "MIT",
@@ -29,15 +29,20 @@
 			"svelte": "./src/lib/index.ts",
 			"import": "./src/lib/index.ts"
 		},
+		"./mode": {
+			"types": "./src/mode/index.ts",
+			"import": "./src/mode/index.ts"
+		},
 		"./fonts/*": "./fonts/*"
 	},
 	"files": [
 		"CHANGELOG.md",
 		"dist",
 		"templates",
-		"fractal-styler-guide",
+		"docs",
 		"fonts",
 		"src/lib",
+		"src/mode",
 		"SNIPPET_AGENTS.md"
 	],
 	"scripts": {

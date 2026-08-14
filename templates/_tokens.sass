@@ -1,31 +1,39 @@
+// Mode marker contract — see docs/09-mode-and-theme.md
+//   [data-mode='light'|'dark']  the OS-backed binary axis (set on <html>)
+//   [data-theme='<name>']       named palettes, orthogonal to mode
+// `[data-theme='light'|'dark']` and `.light`/`.dark` are DEPRECATED aliases for the
+// mode axis, retained for compatibility and removed in 3.0.
+
 :root
+	// Tell the browser which mode it is painting, so scrollbars, form controls and
+	// the default canvas match. Overridden alongside the palette in each mode block.
+	color-scheme: light
+
 	// Fonts
 	--font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
 	--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace
 
-	// Fluid type scale. Public utilities consume these values directly.
+	// Fluid type scale — Utopia 360→1240, 18px@1.2→20px@1.25
 	--text-xs: 10px
-	--text-sm: 12px
-	--text-md: 14px
-	--text-bs: clamp(0.884rem, 0.9065rem + -0.0291vw, 0.9rem)
-	--text-lg: clamp(1.125rem, 1.0739rem + 0.2273vw, 1.25rem)
-	--text-xl: clamp(1.4063rem, 1.3159rem + 0.4014vw, 1.7675rem)
-	--text-2xl: clamp(1.7578rem, 1.5725rem + 0.8238vw, 2.4992rem)
-	--text-3xl: clamp(2.1973rem, 1.8631rem + 1.4852vw, 3.5339rem)
-	--text-4xl: clamp(2.7466rem, 2.184rem + 2.5004vw, 4.997rem)
-	--text-5xl: clamp(3.4332rem, 2.5251rem + 4.0361vw, 7.0657rem)
+	--text-sm: clamp(0.9375rem, 0.9119rem + 0.1136vw, 1rem)
+	--text-md: clamp(1.125rem, 1.0739rem + 0.2273vw, 1.25rem)
+	--text-lg: clamp(1.35rem, 1.2631rem + 0.3864vw, 1.5625rem)
+	--text-xl: clamp(1.62rem, 1.4837rem + 0.6057vw, 1.9531rem)
+	--text-2xl: clamp(1.944rem, 1.7405rem + 0.9044vw, 2.4414rem)
+	--text-3xl: clamp(2.3328rem, 2.0387rem + 1.3072vw, 3.0518rem)
+	--text-4xl: clamp(2.7994rem, 2.384rem + 1.8461vw, 3.8147rem)
 
-	// Finite fluid rhythm. JIT numeric values remain an advanced escape hatch.
-	--space-1: 4px
-	--space-2: clamp(0.5rem, 0.4489rem + 0.2273vw, 0.625rem)
-	--space-3: clamp(0.75rem, 0.6733rem + 0.3409vw, 0.9375rem)
-	--space-4: clamp(1rem, 0.8977rem + 0.4545vw, 1.25rem)
-	--space-6: clamp(1.5rem, 1.3466rem + 0.6818vw, 1.875rem)
-	--space-8: clamp(2rem, 1.7955rem + 0.9091vw, 2.5rem)
-	--space-12: clamp(3rem, 2.6932rem + 1.3636vw, 3.75rem)
-	--space-16: clamp(4rem, 3.5909rem + 1.8182vw, 5rem)
-	--space-20: clamp(5rem, 4.4886rem + 2.2727vw, 6.25rem)
-	--space-24: clamp(6rem, 5.3864rem + 2.7273vw, 7.5rem)
+	// Fluid space scale — t-shirt naming, 360→1240 viewport
+	--space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem)
+	--space-2xs: clamp(0.5625rem, 0.5369rem + 0.1136vw, 0.625rem)
+	--space-xs: clamp(0.875rem, 0.8494rem + 0.1136vw, 0.9375rem)
+	--space-s: clamp(1.125rem, 1.0739rem + 0.2273vw, 1.25rem)
+	--space-m: clamp(1.6875rem, 1.6108rem + 0.3409vw, 1.875rem)
+	--space-l: clamp(2.25rem, 2.1477rem + 0.4545vw, 2.5rem)
+	--space-xl: clamp(3.375rem, 3.2216rem + 0.6818vw, 3.75rem)
+	--space-2xl: clamp(4.5rem, 4.2955rem + 0.9091vw, 5rem)
+	--space-3xl: clamp(6.75rem, 6.4432rem + 1.3636vw, 7.5rem)
+	--space-s-l: clamp(1.125rem, 0.5625rem + 2.5vw, 2.5rem)
 
 	// Radius scale
 	--radius-0: 0
@@ -54,12 +62,16 @@
 	// Layout
 	--header-height: 64px
 	--footer-height: 56px
-	--shell-pad: 20px
+	--shell-pad: var(--space-s-l)
 	--layout-max: 1440px
 	--sidebar-min: 200px
 	--sidebar-max: 360px
 	--body-min: 600px
 	--body-max: 800px
+	--measure: 60ch
+	--grid-max-width: 77.5rem
+	--grid-gutter: var(--space-s-l)
+	--grid-columns: 12
 
 	// Feedback palette
 	--red-500: #ef4444
@@ -71,7 +83,10 @@
 	--feedback-success: var(--emerald-500)
 	--feedback-info: var(--sky-500)
 
-	// Light theme
+	// Light mode palette. This block is load-bearing: it is the only one that applies
+	// with no marker on <html>, so every token stays defined with JS disabled, during
+	// SSR, and for crawlers. Never delete it in favour of an explicit [data-mode='light']
+	// block — that leaves every colour undefined until a marker lands.
 	--bg: #fdfefe
 	--bg-surface: #fcf9f9
 	--bg-raised: #f1f5f9
@@ -87,9 +102,13 @@
 	--ring: rgba(59, 130, 246, 0.35)
 	--text-inverse: #ffffff
 
-// System preference auto dark mode when the user has not selected light.
+// System-preference dark, for visitors who have not explicitly chosen light.
+// The :not() guard is essential — without it this fights an explicit light choice at
+// equal specificity. :where() keeps the guard at (0,1,0) so the explicit blocks below
+// win on source order rather than needing inflated selectors.
 @media (prefers-color-scheme: dark)
-	:root:not([data-theme='light'])
+	:root:not(:where([data-mode='light'], [data-theme='light'], .light))
+		color-scheme: dark
 		--bg: #131313
 		--bg-surface: #222222
 		--bg-raised: #363636
@@ -105,7 +124,10 @@
 		--ring: rgba(59, 130, 246, 0.35)
 		--text-inverse: #0b0f17
 
-[data-theme='dark']
+// Explicit dark. Deprecated aliases kept so projects (and third-party class-based mode
+// libraries) keep working through the 2.x line.
+[data-mode='dark'], [data-theme='dark'], .dark
+	color-scheme: dark
 	--bg: #131313
 	--bg-surface: #222222
 	--bg-raised: #363636
@@ -121,7 +143,9 @@
 	--ring: rgba(59, 130, 246, 0.35)
 	--text-inverse: #0b0f17
 
-[data-theme='light']
+// Explicit light. Last in source order so it wins over the system-preference block.
+[data-mode='light'], [data-theme='light'], .light
+	color-scheme: light
 	--bg: #fdfefe
 	--bg-surface: #fcf9f9
 	--bg-raised: #f1f5f9

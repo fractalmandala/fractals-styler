@@ -25,6 +25,9 @@
 	border-color: var(--theme)
 	&:hover
 		filter: brightness(0.95)
+	&[data-state='open']
+		background: color-mix(in srgb, var(--theme) 85%, black)
+		border-color: color-mix(in srgb, var(--theme) 85%, black)
 
 .button[data-variant='quiet']
 	background: transparent
@@ -32,44 +35,12 @@
 	color: var(--text-primary)
 	&:hover
 		background: var(--bg-surface)
+	&[data-state='open']
+		background: var(--bg-surface)
 
-.icon-button
-	display: inline-flex
-	align-items: center
-	justify-content: center
+.button[data-variant='icon']
 	width: 36px
 	height: 36px
 	padding: 0
-	border-radius: var(--radius-6)
 	border: 1px solid transparent
 	background: transparent
-	color: var(--text-primary)
-	cursor: pointer
-	&:hover
-		background: var(--bg-surface)
-
-button.blank, a.blank
-	background: none
-	border: none
-	cursor: pointer
-	padding: 0
-	text-decoration: none
-	color: inherit
-.link
-	color: var(--theme)
-	text-decoration: none
-	&:hover
-		text-decoration: underline
-.control
-	display: flex
-	width: 100%
-	padding: 8px 12px
-	font-size: var(--text-md)
-	background: var(--bg)
-	color: var(--text-primary)
-	border: 1px solid var(--border)
-	border-radius: var(--radius-6)
-	&:focus-visible
-		outline: none
-		border-color: var(--theme)
-		box-shadow: 0 0 0 2px var(--ring)

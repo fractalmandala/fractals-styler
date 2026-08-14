@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.1
+
+### Fixed
+
+- `_globals.sass` now sets `background: var(--bg)` on `body, html`. It set `color` but never the background, and nothing else in the cascade painted it — so on 2.3.0 the mode system worked correctly while the page stayed white in dark mode. A palette that resolves but is never applied is indistinguishable from one that never resolved, which makes this a slow bug to find. Existing projects can add the one line to their own `_globals.sass` rather than re-running `init --force`.
+
 ## 2.3.0
 
 ### Added — mode and theme

@@ -119,23 +119,46 @@ Themes are orthogonal to mode. `setTheme('ocean')` writes `data-theme="ocean"` a
 
 `setTheme('')` clears the attribute and returns to the default palette.
 
-## Toggle icons and SSR
+## Conditional rendering
 
-Never render a toggle icon from the mode value:
+`mode.current` is a string — `"light"` or `"dark"`. That's the variable.
 
 ```svelte
-<!-- wrong: the server cannot know the visitor's preference -->
-{#if mode.current === 'dark'}<Sun />{:else}<Moon />{/if}
+<script>
+	import { mode } from 'fractals-styler/lib';
+</script>
+
+{#if mode.current === 'dark'}
+	<Sun />
+{:else}
+	<Moon />
+{/if}
 ```
 
-The server picks one, the client may disagree, and you get a hydration mismatch plus a visible icon flip on every load. Use the visibility utilities instead — CSS cannot desynchronise:
+It updates itself; anything reading it re-renders when the mode changes.
+
+Always write `.current`. `mode` on its own is an object, so `mode === 'dark'` is never true — and JavaScript won't warn you, the branch just never runs.
+
+### Notes
+
+**Settings UI** — use `preference.current` instead. It's the three-state value the visitor actually chose (`light`, `dark`, `system`), whereas `mode.current` has already resolved `system` down to what's painted. A "Follow system" option driven by `mode.current` would never show as selected.
+
+**First paint** — the server can't read the visitor's `localStorage`, so during SSR `mode.current` reports `light`. If they prefer dark, an `{#if}` on a server-rendered page corrects itself one frame after hydration. Everywhere else — client-side navigation, anything already interactive, anything mounting after load — there's no delay at all. The page background never flashes either way; that's driven by the pre-paint script.
+
+To remove that frame on a server-rendered toggle, express the swap in CSS, which is applied by the same pre-paint marker:
 
 ```svelte
 <span class="mode-light-only"><Moon /></span>
 <span class="mode-dark-only"><Sun /></span>
 ```
 
-This is what `ModeToggle` does internally.
+This is what `ModeToggle` does. An optimisation for above-the-fold elements, not a requirement.
+
+**Passing mode into JavaScript** — CSS can't set a chart or map theme. Gate on mount so both sides agree:
+
+```svelte
+{#if mounted}<Chart theme={mode.current} />{:else}<div class="chart-skeleton"></div>{/if}
+```
 
 ## Customising the contract
 

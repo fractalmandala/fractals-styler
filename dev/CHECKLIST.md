@@ -39,7 +39,12 @@ Whenever you modify, add, or remove any file or class inside [`templates/`](file
 - [ ] **Every Class the Builder Emits Must Exist:** `generateHtml` pushes class names directly. After any change, cross-check its output against `STATIC_UTILITIES` and `DYNAMIC_PREFIXES`. Breakpoint variants use the `-sm` **suffix**, never a `sm:` prefix.
 - [ ] **Standalone Builder:** `dev/prototype.html` carries its own inlined copy of the node model, generator and control vocabulary. Apply the same changes there or it drifts silently.
 
-### E. Mode & Theme Contract Sync
+### E. Published `src/lib` Sanity (cannot be caught by `pnpm check`)
+
+- [ ] **No `.svelte.ts` files.** Rune modules must be `.svelte.js` plus a hand-written `.d.ts`. The consumer's vite-plugin-svelte compiles dependency `.svelte.*` modules without applying their `vitePreprocess`, so TypeScript syntax fails to parse and breaks their dependency optimization entirely.
+- [ ] **Smoke-test against a real consumer** after any `src/lib` change: `npm pack`, install the tarball into a scratch Vite + Svelte app, import the changed export, and run a dev server. `tsc` and `svelte-check` both pass on code that cannot be consumed — that is exactly how 2.3.2 shipped broken.
+
+### F. Mode & Theme Contract Sync
 
 - [ ] **Marker Selectors:** Mode blocks must use `[data-mode='dark'], [data-theme='dark'], .dark` (and the light equivalent) in **both** `_tokens.sass` and `_colors.sass`. `data-theme`/`.dark` are deprecated aliases retained through 2.x.
 - [ ] **The `:root` Default Survives:** `_tokens.sass` must keep a complete palette on bare `:root`. Removing it leaves every colour undefined whenever no marker lands (JS off, SSR, crawler).

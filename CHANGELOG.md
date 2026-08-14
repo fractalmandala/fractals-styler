@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.3.3
+
+### Fixed
+
+- **`fractals-styler/lib` could not be imported at all.** `mode.svelte.ts` and `toc.svelte.ts` shipped as raw TypeScript. A published `.svelte.ts` module is compiled by the _consumer's_ vite-plugin-svelte, which runs Svelte's module compiler directly and does **not** apply their `vitePreprocess` — preprocessors are not applied to dependency files. Every TS token (`import type`, `export interface`, `$state<T>()`) therefore failed to parse with `Unexpected token` during dependency optimization, taking the whole optimize pass down and leaving `ModeToggle` mounted but inert. `mode.svelte.js` is now plain JavaScript with JSDoc types and a hand-written `mode.svelte.d.ts`, which is the shape `svelte-package` emits and the only form a published Svelte rune module can safely take.
+- This affected every version that shipped `src/lib` (`toc.svelte.ts` since 2.2.x). It only surfaced now because nothing imported `fractals-styler/lib` before the mode runtime existed.
+
+### Removed
+
+- The `toc` store and `TocItem` type. Unused, and it carried the same packaging fault.
+
 ## 2.3.2
 
 ### Fixed

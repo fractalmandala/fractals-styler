@@ -21,22 +21,22 @@ This file is for agents working **on this package**. Consumer projects copy the 
 
 ## Repository map
 
-| Path                | Role                                                                                                                                                           | Ships on npm?           |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `templates/*.sass`  | The editable Sass scaffold copied into consumer projects by `init`                                                                                             | ✅ (as `templates/`)    |
-| `src/cli.ts`        | `fractals-styler init [dest]` CLI; copies `templates/` (resolved as `../templates` relative to `dist/cli.js`)                                                  | ✅ (as `dist/cli.js`)   |
-| `src/index.ts`      | Vite plugin: JIT-generates `virtual:fractals-styler.css`                                                                                                       | ✅ (as `dist/index.js`) |
-| `src/registry.ts`   | `STATIC_UTILITIES`, `DYNAMIC_PREFIXES`, `BREAKPOINTS`, `resolveDeclarations`                                                                                   | ✅ (compiled into dist) |
-| `src/scanner.ts`    | fast-glob scan of content files for class tokens + `--pxN` vars                                                                                                | ✅                      |
-| `src/generate.ts`   | Renders CSS from a scan result                                                                                                                                 | ✅                      |
-| `src/lib/`          | Published Svelte showcase (`StylerPreview`, `AppShell`, `toc`, `styler-preview.ts`) + mode runes adapter and `ModeToggle` — exported via `fractals-styler/lib` | ✅                      |
-| `src/mode/`         | Framework-agnostic mode/theme runtime (`types`, `inline`, `core`) — exported via `fractals-styler/mode`; `inline.ts` is also bundled into the Vite plugin      | ✅                      |
-| `src/builder/`      | Experimental visual layout builder. **Not** in the `files` whitelist                                                                                           | ❌                      |
-| `docs/*.md`         | The progressive guide (`01-setup` … `09-mode-and-theme`)                                                                                                       | ✅ (as `docs/`)         |
-| `SNIPPET_AGENTS.md` | Packaged agent instructions for consumers                                                                                                                      | ✅                      |
-| `fonts/`            | Bundled OFL-1.1 fonts (`fonts/LICENSES.md`)                                                                                                                    | ✅ (as `fonts/`)        |
-| `preview/`          | Local "design system control room" admin workspace (`pnpm preview`)                                                                                            | ❌                      |
-| `dev/`              | Retained experiments, incl. the `prototype.html` layout builder (`pnpm preview:builder`)                                                                       | ❌                      |
+| Path                | Role                                                                                                                                                      | Ships on npm?           |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `templates/*.sass`  | The editable Sass scaffold copied into consumer projects by `init`                                                                                        | ✅ (as `templates/`)    |
+| `src/cli.ts`        | `fractals-styler init [dest]` CLI; copies `templates/` (resolved as `../templates` relative to `dist/cli.js`)                                             | ✅ (as `dist/cli.js`)   |
+| `src/index.ts`      | Vite plugin: JIT-generates `virtual:fractals-styler.css`                                                                                                  | ✅ (as `dist/index.js`) |
+| `src/registry.ts`   | `STATIC_UTILITIES`, `DYNAMIC_PREFIXES`, `BREAKPOINTS`, `resolveDeclarations`                                                                              | ✅ (compiled into dist) |
+| `src/scanner.ts`    | fast-glob scan of content files for class tokens + `--pxN` vars                                                                                           | ✅                      |
+| `src/generate.ts`   | Renders CSS from a scan result                                                                                                                            | ✅                      |
+| `src/lib/`          | Published Svelte showcase (`StylerPreview`, `AppShell`, `styler-preview.ts`) + mode runes adapter and `ModeToggle` — exported via `fractals-styler/lib`   | ✅                      |
+| `src/mode/`         | Framework-agnostic mode/theme runtime (`types`, `inline`, `core`) — exported via `fractals-styler/mode`; `inline.ts` is also bundled into the Vite plugin | ✅                      |
+| `src/builder/`      | Experimental visual layout builder. **Not** in the `files` whitelist                                                                                      | ❌                      |
+| `docs/*.md`         | The progressive guide (`01-setup` … `09-mode-and-theme`)                                                                                                  | ✅ (as `docs/`)         |
+| `SNIPPET_AGENTS.md` | Packaged agent instructions for consumers                                                                                                                 | ✅                      |
+| `fonts/`            | Bundled OFL-1.1 fonts (`fonts/LICENSES.md`)                                                                                                               | ✅ (as `fonts/`)        |
+| `preview/`          | Local "design system control room" admin workspace (`pnpm preview`)                                                                                       | ❌                      |
+| `dev/`              | Retained experiments, incl. the `prototype.html` layout builder (`pnpm preview:builder`)                                                                  | ❌                      |
 
 ## Known inconsistencies (fix before relying on packaging)
 
@@ -61,6 +61,13 @@ This file is for agents working **on this package**. Consumer projects copy the 
   `--modifier` or `is-state` classes, and never BEM chains.
 - Class grammar: short, lowercase, flat, no underscores, no double dashes
   (`layer role variant breakpoint`, e.g. `text-lg`, `pad12-sm`).
+- **Never ship a `.svelte.ts` file.** Rune modules under `src/lib` must be `.svelte.js`
+  (plain JS + JSDoc) with a hand-written `.d.ts` sibling. A published `.svelte.*` module is
+  compiled by the consumer's vite-plugin-svelte, which runs Svelte's module compiler
+  without applying their `vitePreprocess` — preprocessors do not reach dependency files —
+  so TypeScript syntax fails to parse and takes the consumer's whole dependency
+  optimization down. `tsc` and `svelte-check` cannot catch this; only a real consumer
+  build can. Plain `.ts` (no `.svelte.` infix) is fine — it goes through esbuild/rolldown.
 - Mode and theme are two axes and must stay two attributes: `data-mode` for light/dark,
   `data-theme` for named palettes. `[data-theme='light'|'dark']` and `.light`/`.dark` are
   deprecated aliases kept through 2.x; do not add new code that depends on them.

@@ -8,9 +8,8 @@
 export { default as StylerPreview } from './StylerPreview.svelte';
 export * from './styler-preview.js';
 
-/** Canonical docs app shell (CUBE Composition layer) + shared TOC store. */
+/** Canonical docs app shell (CUBE Composition layer). */
 export { default as AppShell } from './AppShell.svelte';
-export { toc, type TocItem } from './toc.svelte';
 
 /** Mode (light/dark) + theme (named palettes) — see docs/09-mode-and-theme.md.
  *

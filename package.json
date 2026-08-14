@@ -1,6 +1,6 @@
 {
 	"name": "fractals-styler",
-	"version": "2.3.2",
+	"version": "2.3.3",
 	"packageManager": "pnpm@11.20.0",
 	"description": "A BEM-free, CUBE-inspired SASS design-system scaffold with token utilities, reusable compositions, an optional JIT escape hatch, and a live token preview.",
 	"license": "MIT",

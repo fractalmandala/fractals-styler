@@ -36,7 +36,7 @@
 - [src/mode/core.ts](src/mode/core.ts): Framework-agnostic runtime — resolve/persist/apply, `matchMedia` listener, cross-tab `storage` sync, transition suppression, `subscribe()` seam for framework adapters. Singleton via `initMode()`.
 - [src/lib/mode.svelte.ts](src/lib/mode.svelte.ts): Svelte 5 runes adapter — `mode.current`, `preference`, `systemMode`, `theme`, `setMode`/`toggleMode`/`resetMode`/`setTheme`, `configureMode`.
 - [src/lib/ModeToggle.svelte](src/lib/ModeToggle.svelte): Prebuilt toggle. Icon swap is CSS-only (`.mode-light-only`/`.mode-dark-only`) to avoid an SSR hydration mismatch.
-- [src/lib/index.ts](src/lib/index.ts): Published `fractals-styler/lib` entry — `StylerPreview`, `AppShell`, `toc` store, `styler-preview.ts` registry, mode runtime + `ModeToggle`.
+- [src/lib/index.ts](src/lib/index.ts): Published `fractals-styler/lib` entry — `StylerPreview`, `AppShell`, `styler-preview.ts` registry, mode runtime + `ModeToggle`.
 - [src/lib/styler-preview.ts](src/lib/styler-preview.ts): Live token-preview registries (`SEMANTIC_GROUPS`, `TYPE_LEVELS`, `TEXT_SAMPLES`) that must mirror `_tokens.sass`.
 - [templates/index.sass](templates/index.sass): The cascade: `@forward 'mixins'` then `@use tokens → typography → globals → primitives → compositions → buttonslinks`.
 - [templates/_tokens.sass](templates/_tokens.sass): Source of truth for all global custom properties and theme overrides.

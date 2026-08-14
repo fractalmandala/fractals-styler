@@ -51,8 +51,8 @@
 		"preview": "vite --config preview/vite.config.ts",
 		"preview:builder": "vite --host 127.0.0.1 --open /dev/prototype.html",
 		"check": "tsc --noEmit && svelte-check --tsconfig ./tsconfig.json",
-		"format": "prettier --write .",
-		"format:check": "prettier --check .",
+		"format": "prettier --write \"src/**/*.{ts,js,svelte,json}\" \"preview/**/*.{ts,js,svelte,html}\" \"docs/**/*.md\" \".github/**/*.{yml,yaml}\" \"*.{md,json}\"",
+		"format:check": "prettier --check \"src/**/*.{ts,js,svelte,json}\" \"preview/**/*.{ts,js,svelte,html}\" \"docs/**/*.md\" \".github/**/*.{yml,yaml}\" \"*.{md,json}\"",
 		"prepare": "tsup"
 	},
 	"peerDependencies": {

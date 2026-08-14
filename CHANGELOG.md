@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.3.2
+
+### Fixed
+
+- The plugin no longer registers `transformIndexHtml` in a SvelteKit project. SvelteKit inspects every registered plugin for that hook and warns that it is unsupported, so simply declaring it printed `The following plugins may not work correctly because they use the transformIndexHtml hook which is not supported: fractals-styler` on every build — three times per build, for the package's primary target. The hook was already redundant there, since `init` patches `src/app.html`. Detection happens at plugin construction (a hook cannot be removed later from `configResolved`), by resolving `@sveltejs/kit` from the Vite root.
+- Plain Vite projects are unaffected and still get the injected script.
+
+### Added
+
+- When SvelteKit is detected and `src/app.html` carries no mode script, the plugin says so once at startup instead of silently shipping nothing. Previously an unpatched project got dev-only injection and no production script, with no signal. Silence it with `mode: false`.
+
 ## 2.3.1
 
 ### Fixed

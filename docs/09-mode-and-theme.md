@@ -30,7 +30,13 @@ import fractalsStyler from 'fractals-styler';
 export default { plugins: [sveltekit(), fractalsStyler()] };
 ```
 
-Both paths are idempotent — a project that has been patched once is never double-injected. To opt out entirely:
+The two paths are deliberately exclusive. SvelteKit renders `src/app.html` through its own
+pipeline and does not support Vite's `transformIndexHtml` hook, so in a SvelteKit project the
+plugin does not register that hook at all and the patched `app.html` does the work. Everywhere
+else the plugin injects into `index.html`. If SvelteKit is detected but `app.html` has not been
+patched, the plugin warns once at startup rather than shipping no script.
+
+To opt out entirely:
 
 ```ts
 fractalsStyler({ mode: false });

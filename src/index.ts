@@ -1,8 +1,26 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { join } from 'node:path';
 import type { Plugin, ViteDevServer } from 'vite';
 import { scanFiles } from './scanner.js';
 import { generateCss } from './generate.js';
 import { buildInlineScript } from './mode/inline.js';
 import { INLINE_SCRIPT_MARKER, type ModeConfig } from './mode/types.js';
+
+/** True when `@sveltejs/kit` resolves from the project — i.e. SvelteKit owns the HTML.
+ *
+ * Detection happens at plugin-construction time because a Vite plugin's hooks are read
+ * off the object as soon as it is registered; `transformIndexHtml` cannot be removed
+ * later from `configResolved`. SvelteKit scans registered plugins for that hook and warns
+ * about every plugin declaring it, so merely *having* it is what produces the noise. */
+function isSvelteKitProject(cwd: string): boolean {
+	try {
+		createRequire(join(cwd, 'noop.js')).resolve('@sveltejs/kit/package.json');
+		return true;
+	} catch {
+		return false;
+	}
+}
 
 export interface FractalsStylerOptions {
 	/** Glob patterns (relative to the Vite project root) to scan for utility classes
@@ -17,7 +35,11 @@ export interface FractalsStylerOptions {
 	 * Applies to Vite's HTML entry (`index.html`). SvelteKit renders `src/app.html`
 	 * through its own pipeline, which does not run `transformIndexHtml` on a production
 	 * build — `fractals-styler init` patches `src/app.html` directly for that case, and
-	 * the marker attribute keeps the two mechanisms from double-injecting. */
+	 * the marker attribute keeps the two mechanisms from double-injecting.
+	 *
+	 * In a SvelteKit project the hook is not registered at all, so SvelteKit does not warn
+	 * about an unsupported hook. If `src/app.html` has not been patched, the plugin says so
+	 * once at startup rather than silently shipping no mode script. */
 	mode?: ModeConfig | false;
 }
 
@@ -41,12 +63,34 @@ export default function fractalsStyler(options: FractalsStylerOptions = {}): Plu
 	const modeOptions = options.mode === false ? null : (options.mode ?? {});
 	let root = process.cwd();
 
+	// SvelteKit serves `src/app.html` through its own renderer, so the CLI patches that
+	// file and this hook is both unnecessary and unsupported there.
+	const underSvelteKit = isSvelteKitProject(root);
+
 	async function build(): Promise<string> {
 		const result = await scanFiles(content, root);
 		return generateCss(result, { unit });
 	}
 
-	return {
+	/** Warn when SvelteKit is in play but nothing has patched `app.html` — otherwise the
+	 * absence of a mode script is invisible until someone notices the palette flashing. */
+	function warnIfUnpatched(): void {
+		if (!modeOptions || !underSvelteKit) return;
+		const appHtml = join(root, 'src', 'app.html');
+		if (!existsSync(appHtml)) return;
+		try {
+			if (readFileSync(appHtml, 'utf-8').includes(INLINE_SCRIPT_MARKER)) return;
+		} catch {
+			return;
+		}
+		console.warn(
+			`[fractals-styler] src/app.html has no mode script, so light/dark mode will flash ` +
+				`on load. Run \`fractals-styler init\` to patch it, or add the tag from ` +
+				`\`buildInlineScriptTag()\` before %sveltekit.head%. Pass \`mode: false\` to silence this.`
+		);
+	}
+
+	const plugin: Plugin = {
 		name: 'fractals-styler',
 		// Our virtual id ends in `.css`, so Vite's own built-in `vite:css`/`vite:css-post`
 		// plugins also match it via their `cssLangRE` check. Without `enforce: 'pre'` they
@@ -56,6 +100,7 @@ export default function fractalsStyler(options: FractalsStylerOptions = {}): Plu
 
 		configResolved(config) {
 			root = config.root;
+			warnIfUnpatched();
 		},
 
 		resolveId(id) {
@@ -72,16 +117,29 @@ export default function fractalsStyler(options: FractalsStylerOptions = {}): Plu
 			if (id === RESOLVED_ID || id.startsWith(RESOLVED_ID + '?')) return build();
 		},
 
-		transformIndexHtml: {
+		configureServer(server: ViteDevServer) {
+			server.watcher.on('all', (_event, file) => {
+				if (!WATCHED_EXT_RE.test(file)) return;
+				const mod = server.moduleGraph.getModuleById(RESOLVED_ID);
+				if (!mod) return;
+				server.moduleGraph.invalidateModule(mod);
+				server.ws.send({ type: 'full-reload' });
+			});
+		}
+	};
+
+	// Attached conditionally, never declared inline: SvelteKit inspects every registered
+	// plugin for `transformIndexHtml` and warns that the hook is unsupported, so a plugin
+	// that merely declares it produces that warning on every build even when the hook is
+	// a no-op. Under SvelteKit the CLI's `src/app.html` patch does this job instead.
+	if (modeOptions && !underSvelteKit) {
+		plugin.transformIndexHtml = {
 			// `pre` so the script lands ahead of anything later plugins add. Within the
 			// document it still needs `head-prepend` — running before the stylesheet
 			// links is the entire point, otherwise the browser paints once first.
 			order: 'pre',
 			handler(html: string) {
-				if (!modeOptions) return;
-				// Idempotency guard. A SvelteKit project has its `app.html` patched by the
-				// CLI, and SvelteKit *does* run this hook in dev — without the check the
-				// script would appear twice in development and once in production.
+				// Idempotency guard, for a hand-patched `index.html`.
 				if (html.includes(INLINE_SCRIPT_MARKER)) return;
 				return [
 					{
@@ -94,18 +152,10 @@ export default function fractalsStyler(options: FractalsStylerOptions = {}): Plu
 					}
 				];
 			}
-		},
+		};
+	}
 
-		configureServer(server: ViteDevServer) {
-			server.watcher.on('all', (_event, file) => {
-				if (!WATCHED_EXT_RE.test(file)) return;
-				const mod = server.moduleGraph.getModuleById(RESOLVED_ID);
-				if (!mod) return;
-				server.moduleGraph.invalidateModule(mod);
-				server.ws.send({ type: 'full-reload' });
-			});
-		}
-	};
+	return plugin;
 }
 
 export { fractalsStyler };

@@ -73,3 +73,7 @@ export function resolveConfig(config: ModeConfig = {}): ResolvedModeConfig {
 /** Marker attribute on the injected script tag. Both the Vite plugin and the CLI check
  * for it so a project that has been patched once is never double-injected. */
 export const INLINE_SCRIPT_MARKER = 'data-fractals-styler-mode';
+
+/** Global the inline script writes its resolved config to, so the browser runtime uses
+ * the same attribute and storage-key names without the consumer configuring them twice. */
+export const GLOBAL_CONFIG_KEY = '__fractalsStylerMode';

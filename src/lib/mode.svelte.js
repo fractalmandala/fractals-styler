@@ -31,13 +31,19 @@ const state = $state({
 
 let started = false;
 
-/** Start the runtime. Called automatically on first access; call it explicitly from your
- * root layout only if you need to pass a config. Must run before first access to take
- * effect — the controller is a singleton and ignores later config.
+/**
+ * Connect the reactive mirror to the runtime.
+ *
+ * This runs once at module evaluation, never lazily from a getter. `subscribe()` invokes
+ * its callback immediately, which writes `$state` — and the first read of `mode.current`
+ * is usually inside a template expression or `$derived`, where writing state throws
+ * `state_unsafe_mutation`. Module evaluation happens before any component renders, so
+ * doing it here is always outside a reactive derivation.
+ *
  * @param {ModeConfig} [config]
  * @returns {void}
  */
-export function configureMode(config = {}) {
+function start(config = {}) {
 	if (started || typeof document === 'undefined') return;
 	started = true;
 	initMode(config).subscribe((next) => {
@@ -50,15 +56,23 @@ export function configureMode(config = {}) {
 	});
 }
 
-function ensure() {
-	if (!started) configureMode();
+/** Optional explicit start. Rarely needed: the runtime starts on import, and the plugin's
+ * own options reach it through the config the inline script publishes, so attribute and
+ * storage-key overrides apply without calling this. Kept for programmatic setups where no
+ * inline script runs.
+ * @param {ModeConfig} [config]
+ * @returns {void}
+ */
+export function configureMode(config = {}) {
+	start(config);
 }
+
+start();
 
 /** The resolved mode — the value you paint with. During SSR it reports `light`; the
  * inline script has already stamped the real value client-side before this module runs. */
 export const mode = {
 	get current() {
-		ensure();
 		return state.mode;
 	}
 };
@@ -66,7 +80,6 @@ export const mode = {
 /** The user's raw three-state preference: `light`, `dark` or `system`. */
 export const preference = {
 	get current() {
-		ensure();
 		return state.preference;
 	}
 };
@@ -74,7 +87,6 @@ export const preference = {
 /** What the OS reports right now, regardless of preference. */
 export const systemMode = {
 	get current() {
-		ensure();
 		return state.system;
 	}
 };
@@ -82,7 +94,6 @@ export const systemMode = {
 /** The active named theme, or `''` for none. Orthogonal to mode. */
 export const theme = {
 	get current() {
-		ensure();
 		return state.theme;
 	}
 };
@@ -92,20 +103,17 @@ export const theme = {
  * @returns {void}
  */
 export function setMode(next) {
-	ensure();
 	initMode().setMode(next);
 }
 
 /** @returns {void} */
 export function toggleMode() {
-	ensure();
 	initMode().toggleMode();
 }
 
 /** Return to following the OS preference.
  * @returns {void} */
 export function resetMode() {
-	ensure();
 	initMode().resetMode();
 }
 
@@ -114,7 +122,6 @@ export function resetMode() {
  * @returns {void}
  */
 export function setTheme(next) {
-	ensure();
 	initMode().setTheme(next);
 }
 

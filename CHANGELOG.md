@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.3.4
+
+### Fixed
+
+- **`state_unsafe_mutation` when reading `mode.current` from a template.** The runtime started lazily on first read, and `subscribe()` invokes its callback immediately — so the first read wrote `$state`. Since that first read is normally inside a template expression or `$derived`, Svelte correctly refused it. The runtime now connects at module evaluation, which always happens before any component renders and therefore outside any reactive derivation. `{#if mode.current === 'dark'}` works anywhere.
+
+### Changed
+
+- The inline script publishes its resolved config to `window.__fractalsStylerMode`, and the runtime reads it. Customising `storageKey` or `attribute` in the Vite plugin previously left the browser runtime on defaults, so the script and the runtime disagreed about where the preference was stored. They can no longer drift.
+- `configureMode()` is now optional and rarely needed — the runtime starts on import and picks up plugin options from the published config. It remains exported for programmatic setups where no inline script runs.
+
 ## 2.3.3
 
 ### Fixed

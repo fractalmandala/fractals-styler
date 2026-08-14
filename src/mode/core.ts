@@ -8,6 +8,7 @@
  */
 
 import {
+	GLOBAL_CONFIG_KEY,
 	resolveConfig,
 	type Mode,
 	type ModeConfig,
@@ -41,6 +42,13 @@ function writeStorage(key: string, value: string): void {
 
 function isMode(value: unknown): value is Mode {
 	return value === 'light' || value === 'dark' || value === 'system';
+}
+
+/** Config the inline script left on `window`. Absent when the script was blocked by CSP
+ * or never installed, in which case the built-in defaults apply. */
+function readPublishedConfig(): ModeConfig {
+	const published = (globalThis as Record<string, unknown>)[GLOBAL_CONFIG_KEY];
+	return published && typeof published === 'object' ? (published as ModeConfig) : {};
 }
 
 /** Suppress transitions across a mode switch. Without this, every element with a
@@ -77,7 +85,10 @@ class Controller implements ModeController {
 	#destroyed = false;
 
 	constructor(config: ModeConfig = {}) {
-		this.#config = resolveConfig(config);
+		// Config published by the inline script sits between the built-in defaults and any
+		// explicit argument, so plugin options reach the runtime automatically and the two
+		// cannot disagree about which storage key holds the preference.
+		this.#config = resolveConfig({ ...readPublishedConfig(), ...config });
 
 		const stored = readStorage(this.#config.storageKey);
 		this.#preference = isMode(stored) ? stored : this.#config.defaultMode;

@@ -1,5 +1,7 @@
-dev/prototype.html
-dev/archive/
+# Private development material — not published, not part of the styling contract.
+# Covers prototype.html, archive/, the working docs and design-token-standard.json.
+dev/
+
 fonts/
 dist/
 node_modules/

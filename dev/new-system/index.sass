@@ -1,0 +1,15 @@
+// =============================================================================
+// ENTRY — the one file a project imports. Cascade order matters.
+// -----------------------------------------------------------------------------
+//   1. tokens      define the CSS custom properties (the only literal values)
+//   2. utilities   project the atom fractals to markup classes (optional)
+//   3. blocks      components composed from fractals
+//   4. layouts     page templates composed from fractals
+// The fractal *mixins/functions* themselves emit nothing until called, so the
+// output only contains what you actually use.
+// =============================================================================
+
+@use 'fractals/tokens'
+@use 'fractals/utilities'
+@use 'components/blocks'
+@use 'components/layouts'

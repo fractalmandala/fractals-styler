@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>fractals — demo</title>
+	<!-- Generated from ../index.sass. Rebuild:
+	     npx sass index.sass:examples/demo.css --load-path . (run from dev/new-system) -->
+	<link rel="stylesheet" href="demo.css" />
+	<style>
+		/* page-local demo dressing only */
+		body { font-family: var(--font-sans); background: var(--bg); color: var(--text-primary); margin: 0; }
+		.demo-label { font-size: var(--text-sm); color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+		.tile { min-height: 96px; display: grid; place-items: center; background: var(--bg-raised); border-radius: var(--radius-12); }
+	</style>
+</head>
+<body>
+	<!-- Notice how semantic the markup is. The recipe lives in SASS, not here. -->
+	<div class="app-shell">
+		<header class="app-header">
+			<strong>fractals</strong>
+			<nav class="row gap-s" style="margin-inline-start:auto">
+				<a class="button" data-variant="ghost">Docs</a>
+				<a class="button" data-variant="primary">Get started</a>
+			</nav>
+		</header>
+
+		<main class="app-main box gap-2xl" style="padding:var(--space-2xl) var(--space-l)">
+
+			<section class="box gap-s">
+				<p class="demo-label">.grid-3 — responsive 1 → 2 → 3</p>
+				<div class="grid-3">
+					<div class="tile">1</div>
+					<div class="tile">2</div>
+					<div class="tile">3</div>
+					<div class="tile">4</div>
+					<div class="tile">5</div>
+					<div class="tile">6</div>
+				</div>
+			</section>
+
+			<section class="box gap-s">
+				<p class="demo-label">.card — a fractal recipe (+surface +stack)</p>
+				<div class="grid-3">
+					<article class="card">
+						<h3 class="text-lg">Composable</h3>
+						<p class="text-sm">Built from <span class="kbd">+surface</span> and <span class="kbd">+stack</span>.</p>
+						<span class="badge">recipe</span>
+					</article>
+					<article class="card" data-elevated>
+						<h3 class="text-lg">Elevated</h3>
+						<p class="text-sm">Same block, <span class="kbd">data-elevated</span> exception.</p>
+						<span class="badge">exception</span>
+					</article>
+					<article class="card">
+						<h3 class="text-lg">Semantic</h3>
+						<p class="text-sm">One class in markup, not six.</p>
+						<span class="badge">clean</span>
+					</article>
+				</div>
+			</section>
+
+			<section class="box gap-s">
+				<p class="demo-label">.hero — +cover + centered +stack</p>
+				<div class="hero" style="min-height:40vh;background:var(--bg-surface);border-radius:var(--radius-16)">
+					<div class="center">
+						<h1 class="text-3xl">Fractals compose.</h1>
+						<p class="text-md">Atoms into molecules into components into pages.</p>
+						<div class="row gap-s">
+							<button class="button" data-variant="primary">Primary</button>
+							<button class="button" data-variant="ghost">Ghost</button>
+						</div>
+					</div>
+				</div>
+			</section>
+
+		</main>
+
+		<footer class="app-footer">
+			<span class="text-sm">Built with fractals-styler · the fractal model</span>
+		</footer>
+	</div>
+</body>
+</html>

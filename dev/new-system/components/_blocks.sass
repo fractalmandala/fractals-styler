@@ -1,0 +1,88 @@
+// =============================================================================
+// BLOCKS — components as recipes of fractals. Note how little CSS is here:
+// each block is a handful of fractal calls plus its own genuinely-unique lines.
+// State is expressed with data-*/aria-*, never modifier classes.
+// =============================================================================
+
+@use '../fractals' as *
+
+.card
+	+surface(surface, s, 12)
+	+stack(s)
+	&[data-elevated]
+		+shadow(md)
+
+.panel
+	+surface(raised, m, 16)
+	+stack(m)
+
+.badge
+	+row(center, center)
+	display: inline-flex
+	+px(2xs)
+	+type(xs)
+	+weight(500)
+	+radius(full)
+	+bg(raised)
+	+ink(secondary)
+	padding-block: 2px
+
+.avatar
+	+center
+	+square(var(--avatar-size, 40px))
+	+radius(full)
+	+bg(raised)
+	+ink(secondary)
+	overflow: hidden
+
+.input
+	display: block
+	+w(100%)
+	+px(2xs)
+	+type(md)
+	+leading(1.5)
+	+border
+	+radius(6)
+	+bg(bg)
+	+ink(primary)
+	padding-block: 8px
+	&:focus-visible
+		+ring
+
+.button
+	+row(center, center)
+	+gap(2xs)
+	+px(s)
+	+radius(6)
+	+weight(500)
+	+transition(background-color)
+	cursor: pointer
+	padding-block: 8px
+	user-select: none
+	// Exceptions: variants live on data-variant, not in the class name.
+	&[data-variant='primary']
+		background: var(--theme)
+		color: var(--text-inverse)
+		&:hover
+			background: var(--theme-hover)
+	&[data-variant='ghost']
+		background: transparent
+		+ink(secondary)
+		&:hover
+			+bg(raised)
+
+.divider
+	border: none
+	+border(top)
+	margin-block: space(s)
+
+.kbd
+	display: inline-block
+	+px(3xs)
+	+type(xs)
+	+leading(1)
+	+radius(4)
+	+bg(raised)
+	border: 1px solid var(--border-strong)
+	font-family: var(--font-mono)
+	padding-block: 2px

@@ -1,0 +1,155 @@
+// =============================================================================
+// ATOM FRACTALS — the indivisible units. One visual decision each.
+// -----------------------------------------------------------------------------
+// Every atom is a mixin. Call it inside a class to compose, or let
+// _utilities.sass project it to a utility class. Same fractal, two consumers.
+// =============================================================================
+
+@use 'config' as *
+
+// --- Flow: the two axes of layout ------------------------------------------
+// A box is a vertical stack, a row is horizontal. Optional semantic alignment:
+//   +box(center)          → items centered on the cross axis
+//   +row(between, center) → spread on main axis, centered on cross axis
+=box($x: null, $y: null)
+	display: flex
+	flex-direction: column
+	@if $x
+		align-items: align($x)
+	@if $y
+		justify-content: align($y)
+
+=row($x: null, $y: null)
+	display: flex
+	flex-direction: row
+	@if $x
+		justify-content: align($x)
+	@if $y
+		align-items: align($y)
+
+=wrap
+	flex-wrap: wrap
+
+=grid($cols: 1)
+	display: grid
+	grid-template-columns: repeat($cols, minmax(0, 1fr))
+
+// A grid that reflows on its own — no breakpoints, no counting columns.
+=auto-grid($min: 15rem, $gap: s)
+	display: grid
+	grid-template-columns: repeat(auto-fit, minmax(min(#{$min}, 100%), 1fr))
+	gap: space($gap)
+
+// Dead-center anything (grid is the one-liner that works for a single child).
+=center
+	display: grid
+	place-items: center
+
+// --- Spacing ---------------------------------------------------------------
+=gap($v: s)
+	gap: space($v)
+
+=pad($v: s)
+	padding: space($v)
+
+=px($v: s)
+	padding-inline: space($v)
+
+=py($v: s)
+	padding-block: space($v)
+
+=mx-auto
+	margin-inline: auto
+
+=my-auto
+	margin-block: auto
+
+// --- Size ------------------------------------------------------------------
+=w($v: 100%)
+	width: $v
+
+=h($v: 100%)
+	height: $v
+
+=full
+	width: 100%
+	height: 100%
+
+=square($v)
+	width: $v
+	height: $v
+
+=grow($n: 1)
+	flex-grow: $n
+
+=shrink($n: 0)
+	flex-shrink: $n
+
+=min0
+	min-width: 0
+	min-height: 0
+
+// --- Surface & skin --------------------------------------------------------
+=bg($role: surface)
+	background-color: surface($role)
+
+=ink($role: primary)
+	color: ink($role)
+
+=border($side: all, $color: var(--border))
+	@if $side == all
+		border: 1px solid $color
+	@else
+		border-#{$side}: 1px solid $color
+
+=radius($v: 12)
+	border-radius: radius($v)
+
+=shadow($v: md)
+	box-shadow: shadow($v)
+
+// --- Position --------------------------------------------------------------
+=relative
+	position: relative
+
+=absolute($inset: null)
+	position: absolute
+	@if $inset
+		inset: $inset
+
+=sticky($top: 0)
+	position: sticky
+	top: $top
+
+=fill
+	position: absolute
+	inset: 0
+
+// --- Type ------------------------------------------------------------------
+=type($v)
+	font-size: text-size($v)
+
+=weight($w: 500)
+	font-weight: $w
+
+=leading($lh: 1.5)
+	line-height: $lh
+
+=truncate
+	overflow: hidden
+	white-space: nowrap
+	text-overflow: ellipsis
+
+=clamp-lines($n: 2)
+	display: -webkit-box
+	-webkit-line-clamp: $n
+	-webkit-box-orient: vertical
+	overflow: hidden
+
+// --- Motion ----------------------------------------------------------------
+=transition($props: all, $dur: 150ms, $ease: ease)
+	transition: $props $dur $ease
+
+=ring($color: var(--ring))
+	outline: 2px solid $color
+	outline-offset: 1px

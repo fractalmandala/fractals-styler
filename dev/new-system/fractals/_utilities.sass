@@ -1,0 +1,111 @@
+// =============================================================================
+// UTILITY PROJECTION — the *other* way to consume a fractal.
+// -----------------------------------------------------------------------------
+// A fractal is a mixin. Here we bind a subset of them to class names so they
+// stay usable straight from markup (`class="box gap-m pad-l"`). This is the
+// key idea: utility classes are not a separate system — they are a generated
+// projection of the exact same fractals your components compose. Emit only the
+// atoms you want in markup; delete this whole file if you go SASS-only.
+// =============================================================================
+
+@use 'config' as *
+@use 'atoms' as *
+@use 'molecules' as *
+@use 'responsive' as *
+
+// --- Flow ------------------------------------------------------------------
+.box
+	+box
+.row
+	+row
+	&.wrap
+		+wrap
+
+// Alignment modifiers, semantic and axis-aware.
+.box
+	&.xcenter
+		align-items: center
+	&.xleft
+		align-items: flex-start
+	&.xright
+		align-items: flex-end
+	&.ycenter
+		justify-content: center
+	&.ytop
+		justify-content: flex-start
+	&.ybot
+		justify-content: flex-end
+
+.row
+	&.ycenter
+		align-items: center
+	&.ytop
+		align-items: flex-start
+	&.ybot
+		align-items: flex-end
+	&.xbetween
+		justify-content: space-between
+	&.xevenly
+		justify-content: space-evenly
+	&.xleft
+		justify-content: flex-start
+	&.xright
+		justify-content: flex-end
+
+// Fixed column grids.
+@for $n from 1 through 6
+	.grid-cols-#{$n}
+		+grid($n)
+
+.center
+	+center
+
+// --- Spacing scale → gap-* / pad-* -----------------------------------------
+@each $s in $space-steps
+	.gap-#{$s}
+		+gap($s)
+	.pad-#{$s}
+		+pad($s)
+	.px-#{$s}
+		+px($s)
+	.py-#{$s}
+		+py($s)
+
+// --- Radius / shadow / surface ---------------------------------------------
+@each $r in $radius-steps
+	.radius-#{$r}
+		+radius($r)
+
+@each $s in $shadow-steps
+	.shadow-#{$s}
+		+shadow($s)
+
+@each $role in $surface-roles
+	.bg-#{$role}
+		+bg($role)
+
+.border
+	+border
+@each $side in top right bottom left
+	.border-#{$side}
+		+border($side)
+
+// --- Type ------------------------------------------------------------------
+@each $t in $text-steps
+	.text-#{$t}
+		+type($t)
+
+.truncate
+	+truncate
+
+// --- Sizing shortcuts ------------------------------------------------------
+.wfull
+	+w(100%)
+.hfull
+	+h(100%)
+.full
+	+full
+.grow
+	+grow
+.min0
+	+min0

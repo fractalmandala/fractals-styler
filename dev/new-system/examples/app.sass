@@ -1,0 +1,38 @@
+// =============================================================================
+// EXAMPLE — a project stylesheet. Shows the two consumption modes side by side.
+// Compile:  npx sass dev/new-system/examples/app.sass:app.css --load-path dev/new-system
+// =============================================================================
+
+@use '../fractals' as *   // pure API: mixins + functions, no css emitted
+@use '../index'           // the shipped system: tokens + utilities + components
+
+// A bespoke component the design system doesn't ship — authored purely from
+// fractals. No new tokens, no BEM, no utility soup in the markup.
+.feature-card
+	+surface(surface, m, 16, md)
+	+stack(s)
+	+transition(transform)
+	&:hover
+		transform: translateY(-2px)
+	> .feature-icon
+		+center
+		+square(48px)
+		+radius(12)
+		+bg(raised)
+	> h3
+		+type(lg)
+		+weight(600)
+	> p
+		+ink(secondary)
+		+leading(1.6)
+
+// A pricing row: cluster fractal, responsive via +at.
+.pricing
+	+cols((base: 1, md: 3), l)
+	.plan
+		+surface(surface, l, 16)
+		+stack(m, center)
+		text-align: center
+		&[data-featured]
+			border-color: var(--theme)
+			+shadow(lg)

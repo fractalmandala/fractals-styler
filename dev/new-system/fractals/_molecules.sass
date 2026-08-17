@@ -1,0 +1,93 @@
+// =============================================================================
+// MOLECULE FRACTALS — self-similar: each is a small graph of atom fractals.
+// -----------------------------------------------------------------------------
+// This is the payoff of the model. A molecule reads like a recipe of atoms,
+// and a component (next layer up) reads like a recipe of molecules. Same move
+// at every scale — that is the "fractal" in fractals-styler.
+// =============================================================================
+
+@use 'config' as *
+@use 'atoms' as *
+@use 'responsive' as *
+
+// Stack — vertical rhythm with one shared gap.
+=stack($gap: xs, $x: null)
+	+box($x)
+	+gap($gap)
+
+// Cluster — wrapping row of chips/tags/buttons.
+=cluster($gap: xs, $x: start, $y: center)
+	+row($x, $y)
+	+wrap
+	+gap($gap)
+
+// Center — a centered reading column bounded by a measure.
+=center-column($max: var(--measure, 60ch), $pad: s)
+	max-width: $max
+	+mx-auto
+	+px($pad)
+
+// Cover — fills a min-height with a centered focal child.
+=cover($min: 100vh, $pad: s)
+	+box
+	min-height: $min
+	+pad($pad)
+	> *
+		margin-block: 0
+	> .center
+		+my-auto
+
+// Frame — fixed aspect-ratio media box.
+=frame($ratio: 16 / 9)
+	aspect-ratio: $ratio
+	overflow: hidden
+	> :is(img, video, iframe)
+		+full
+		object-fit: cover
+
+// Reel — horizontal scroll-snap rail.
+=reel($gap: xs)
+	+row
+	+gap($gap)
+	overflow-x: auto
+	overscroll-behavior-inline: contain
+	scroll-snap-type: inline mandatory
+	> *
+		scroll-snap-align: start
+		flex: 0 0 auto
+
+// Sidebar — an intrinsic rail beside a fluid main; wraps when tight.
+=with-sidebar($rail: 240px, $gap: s, $min: 60%)
+	+row
+	+wrap
+	+gap($gap)
+	> .rail
+		flex-basis: $rail
+		flex-grow: 1
+	> .flow
+		flex-basis: 0
+		flex-grow: 999
+		min-width: $min
+
+// Surface — the "material" fractal: skin + elevation in one call.
+// The building block of every card/panel/popover.
+=surface($bg: surface, $pad: s, $radius: 12, $elevation: none)
+	+bg($bg)
+	+border
+	+radius($radius)
+	+pad($pad)
+	@if $elevation != none
+		+shadow($elevation)
+
+// Responsive column grid from a per-breakpoint map:
+//   +cols((base: 1, sm: 2, lg: 3))
+=cols($map, $gap: s)
+	display: grid
+	grid-auto-flow: row
+	+gap($gap)
+	@each $bp, $n in $map
+		@if $bp == base
+			grid-template-columns: repeat($n, minmax(0, 1fr))
+		@else
+			+at($bp)
+				grid-template-columns: repeat($n, minmax(0, 1fr))

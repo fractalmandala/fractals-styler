@@ -1,0 +1,86 @@
+// =============================================================================
+// CONFIG — the finite vocabulary every fractal draws from.
+// -----------------------------------------------------------------------------
+// This file holds the *scales* (as Sass data) and the *resolvers* (functions).
+// Fractals never hardcode a px value or a token name; they always route through
+// space(), radius(), etc. so the whole system speaks one vocabulary.
+// =============================================================================
+
+@use 'sass:map'
+@use 'sass:math'
+@use 'sass:meta'
+@use 'sass:list'
+
+// --- Scales (mirror the CSS custom properties defined in _tokens.sass) --------
+
+// Breakpoint edges. Mobile-first: each is a min-width.
+$breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1240px)
+
+// The finite step keywords. Anything in these lists resolves to a token var();
+// a bare unitless number resolves to px (the escape hatch).
+$space-steps: 3xs 2xs xs s m l xl 2xl 3xl s-l
+$radius-steps: 0 2 4 6 8 12 16 24 full
+$text-steps: xs sm md lg xl 2xl 3xl 4xl
+$shadow-steps: sm md lg
+$surface-roles: bg surface raised
+$text-roles: primary secondary muted inverse
+
+// Semantic alignment vocabulary → real flexbox/grid values.
+$align-map: (start: flex-start, end: flex-end, center: center, between: space-between, around: space-around, evenly: space-evenly, stretch: stretch, baseline: baseline)
+
+// --- Resolvers ----------------------------------------------------------------
+
+// space(m) → var(--space-m)  |  space(18) → 18px  |  space(2rem) → 2rem
+@function space($v)
+	@if $v == null
+		@return null
+	@else if list.index($space-steps, $v)
+		@return var(--space-#{$v})
+	@else if meta.type-of($v) == number and math.is-unitless($v)
+		@return #{$v}px
+	@else
+		@return $v
+
+// radius(12) uses the token; radius(10) (not on the scale) → 10px
+@function radius($v)
+	@if list.index($radius-steps, $v)
+		@return var(--radius-#{$v})
+	@else if meta.type-of($v) == number and math.is-unitless($v)
+		@return #{$v}px
+	@else
+		@return $v
+
+@function text-size($v)
+	@if list.index($text-steps, $v)
+		@return var(--text-#{$v})
+	@else
+		@return $v
+
+@function shadow($v)
+	@if list.index($shadow-steps, $v)
+		@return var(--shadow-#{$v})
+	@else
+		@return $v
+
+// surface(surface) → var(--bg-surface); surface(bg) → var(--bg)
+@function surface($role)
+	@if $role == bg
+		@return var(--bg)
+	@else
+		@return var(--bg-#{$role})
+
+@function ink($role)
+	@if $role == primary
+		@return var(--text-primary)
+	@else
+		@return var(--text-#{$role})
+
+// Semantic → engine value for alignment; passes unknown values through.
+@function align($v)
+	$m: map.get($align-map, $v)
+	@if $m
+		@return $m
+	@return $v
+
+@function bp($name)
+	@return map.get($breakpoints, $name)

@@ -1,0 +1,43 @@
+// =============================================================================
+// RESPONSIVE FRACTALS — the units that let any other fractal grow with the page.
+// -----------------------------------------------------------------------------
+// These are self-similar too: +at(md) wraps any block of fractal calls in a
+// breakpoint, so a "responsive component" is just a component whose fractals
+// are re-stated inside +at(...).
+// =============================================================================
+
+@use 'sass:map'
+@use 'config' as *
+
+// +at(md) — mobile-first min-width query by name (sm/md/lg/xl) or raw length.
+=at($name)
+	$edge: $name
+	@if map.has-key($breakpoints, $name)
+		$edge: bp($name)
+	@media (min-width: #{$edge})
+		@content
+
+// +until(md) — max-width query (one below the named edge).
+=until($name)
+	$edge: $name
+	@if map.has-key($breakpoints, $name)
+		$edge: bp($name)
+	@media (max-width: #{$edge})
+		@content
+
+// Container-query fractals — component-scoped responsiveness.
+=cq
+	container-type: inline-size
+
+=cq-at($width)
+	@container (min-width: #{$width})
+		@content
+
+=cq-until($width)
+	@container (max-width: #{$width})
+		@content
+
+// Motion / preference-aware fractal.
+=reduce-motion
+	@media (prefers-reduced-motion: reduce)
+		@content

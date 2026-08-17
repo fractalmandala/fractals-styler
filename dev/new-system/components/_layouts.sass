@@ -1,0 +1,108 @@
+// =============================================================================
+// LAYOUTS — the largest fractals. Same recipe move, page scale.
+// These are the concrete deliverables you named: a responsive 3-col grid, a
+// hero, a holy-grail, a docs template. Each is a short composition of fractals.
+// =============================================================================
+
+@use '../fractals' as *
+
+// 1. Responsive grid of 3 columns — 1 → 2 → 3 across breakpoints.
+.grid-3
+	+cols((base: 1, sm: 2, lg: 3), m)
+
+// A grid that never needs breakpoints: it fits as many columns as will hold
+// the min track. Reach for this before .grid-3 when column count is negotiable.
+.card-grid
+	+auto-grid(16rem, m)
+
+// 2. Hero — full-viewport cover with a centered, measured message.
+.hero
+	+cover(80vh, xl)
+	> .center
+		+stack(m, center)
+		text-align: center
+		max-width: 45ch
+
+// 3. Holy grail — header / (nav · main · aside) / footer.
+.holy-grail
+	display: grid
+	min-height: 100vh
+	grid-template-rows: auto 1fr auto
+	grid-template-areas: 'header' 'main' 'footer'
+	> .hg-header
+		grid-area: header
+	> .hg-footer
+		grid-area: footer
+	> .hg-body
+		grid-area: main
+		display: grid
+		grid-template-columns: 1fr
+		+gap(m)
+		+pad(m)
+	+at(lg)
+		> .hg-body
+			grid-template-columns: var(--nav-w, 220px) minmax(0, 1fr) var(--aside-w, 260px)
+			> .hg-nav
+				+sticky(var(--space-m))
+				align-self: start
+			> .hg-aside
+				+sticky(var(--space-m))
+				align-self: start
+
+// 4. Docs template — sidebar nav + reading column + on-page TOC.
+.docs
+	display: grid
+	min-height: 100vh
+	grid-template-columns: 1fr
+	> .docs-nav
+		display: none
+	> .docs-toc
+		display: none
+	> .docs-main
+		+min0
+		+stack(m)
+		+center-column(72ch, s-l)
+		+py(l)
+	+at(md)
+		grid-template-columns: var(--docs-nav-w, 240px) minmax(0, 1fr)
+		> .docs-nav
+			+box
+			+sticky(0)
+			+py(l)
+			+px(s)
+			height: 100vh
+			overflow-y: auto
+			+border(right)
+	+at(xl)
+		grid-template-columns: var(--docs-nav-w, 240px) minmax(0, 1fr) var(--docs-toc-w, 220px)
+		> .docs-toc
+			+box
+			+sticky(0)
+			+py(l)
+			+px(s)
+			height: 100vh
+			overflow-y: auto
+			+ink(secondary)
+
+// 5. App shell — sticky header, fluid body, footer. The frame most apps live in.
+.app-shell
+	+box
+	+relative
+	isolation: isolate
+	min-height: 100vh
+	> .app-header
+		+row(null, center)
+		+sticky(0)
+		+px(m)
+		z-index: var(--z-sticky)
+		height: var(--header-height)
+		+bg(surface)
+		+border(bottom)
+	> .app-main
+		+grow
+		+min0
+	> .app-footer
+		+row(null, center)
+		+px(m)
+		min-height: var(--footer-height)
+		+border(top)
